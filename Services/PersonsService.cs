@@ -1,13 +1,53 @@
-﻿using ServiceContracts;
+﻿using Entities;
+using ServiceContracts;
 using ServiceContracts.DTO;
 
 namespace Services;
 
 public class PersonsService : IPersonService
 {
+    private readonly List<Person> _persons;
+    private readonly CountriesService _countriesService;
+
+    public PersonsService()
+    {
+        _persons = new List<Person>();
+        _countriesService = new CountriesService();
+    }
+
+    private PersonResponse ConvertPersonToPersonResponse(Person person)
+    {
+        PersonResponse personResponse = person.ToPersonResponse();
+
+        personResponse.Country =
+            _countriesService.GetCountryByCountryId(person.CountryID)
+                ?.CountryName;
+
+        return personResponse;
+    }
+
+
     public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
     {
-        throw new NotImplementedException();
+        // Check if PersonAddRequest is not null
+        if (personAddRequest == null)
+            throw new ArgumentNullException(nameof(personAddRequest));
+
+        // Validate PersonName
+        if (string.IsNullOrEmpty(personAddRequest.Name))
+            throw new ArgumentException("Person Name is required");
+
+        // Convert personAddRequest into Person type
+        Person person = personAddRequest.ToPerson();
+
+        // Generate a new PersonID
+        person.Id = Guid.NewGuid();
+
+        // Add Person object to persons list
+        _persons.Add(person);
+
+        // Convert Person object into PersonResponse type
+        return ConvertPersonToPersonResponse(person);
     }
 
     public List<PersonResponse> GetAllPersons()
