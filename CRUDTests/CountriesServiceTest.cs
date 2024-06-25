@@ -13,6 +13,8 @@ public class CountriesServiceTest
         _countriesService = new CountriesService();
     }
 
+    #region AddCountry
+
     // When CountryAddRequest is null,
     // AddCountry should throw an ArgumentNullException
     [Fact]
@@ -87,7 +89,58 @@ public class CountriesServiceTest
         // Act
         CountryResponse response = _countriesService.AddCountry(request);
 
+        List<CountryResponse> countries_from_GetAllCountries =
+            _countriesService.GetAllCountries();
+
         // Assert
         Assert.True(response.CountryId != Guid.Empty);
+        Assert.Contains(response, countries_from_GetAllCountries);
     }
+
+    #endregion
+
+    #region GetAllCountries
+
+    // The list of countries should be empty
+    // by default (before adding any countries)
+    [Fact]
+    public void GetAllCountries_EmptyList()
+    {
+        // Act 
+        List<CountryResponse> actual_country_response_list =
+            _countriesService.GetAllCountries();
+
+        // Assert
+        Assert.Empty(actual_country_response_list);
+    }
+
+    // 
+    [Fact]
+    public void GetAllCountries_AddFewCountries()
+    {
+        // Arrange
+        List<CountryAddRequest> country_request_list = new()
+        {
+            new CountryAddRequest { CountryName = "USA" },
+            new CountryAddRequest { CountryName = "Poland" },
+            new CountryAddRequest { CountryName = "India" }
+        };
+
+        // Act
+        List<CountryResponse> countries_list_from_add_country = new();
+        foreach (CountryAddRequest country_request in country_request_list)
+            countries_list_from_add_country.Add(
+                _countriesService.AddCountry(country_request));
+
+        List<CountryResponse> actualCountryResponseList =
+            _countriesService.GetAllCountries();
+
+        // Read each element from the list
+        foreach (CountryResponse expected_country in
+                 countries_list_from_add_country)
+            // Assert
+            Assert.Contains(expected_country, actualCountryResponseList);
+    }
+
+    #endregion
 }
