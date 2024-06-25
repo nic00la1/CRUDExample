@@ -1,4 +1,5 @@
-﻿using ServiceContracts;
+﻿using Entities;
+using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
 
@@ -140,6 +141,48 @@ public class CountriesServiceTest
                  countries_list_from_add_country)
             // Assert
             Assert.Contains(expected_country, actualCountryResponseList);
+    }
+
+    #endregion
+
+    #region GetCountryById
+
+    // If we supply null as CountryId, it should return null as CountryResponse
+    [Fact]
+    public void GetCountryById_NullCountryId()
+    {
+        // Arrange
+        Guid? countryId = null;
+
+        // Act
+        CountryResponse? country_response_from_get_method =
+            _countriesService.GetCountryByCountryId(countryId);
+
+        // Assert
+        Assert.Null(country_response_from_get_method);
+    }
+
+    // If we supply a valid CountryId, it should return the matching 
+    // country details as CountryResponse object
+    [Fact]
+    public void GetCountryById_ValidCountryId()
+    {
+        // Arrange
+        CountryAddRequest? country_add_request = new()
+        {
+            CountryName = "China"
+        };
+
+        CountryResponse country_response_from_add =
+            _countriesService.AddCountry(country_add_request);
+
+        // Act
+        CountryResponse? country_response_from_get =
+            _countriesService.GetCountryByCountryId(country_response_from_add
+                .CountryId);
+
+        // Assert
+        Assert.Equal(country_response_from_add, country_response_from_get);
     }
 
     #endregion
