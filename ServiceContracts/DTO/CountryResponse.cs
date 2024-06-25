@@ -10,16 +10,16 @@ public class CountryResponse
 {
     public Guid CountryId { get; set; }
     public string? CountryName { get; set; }
+}
 
-    public static class CountryExtensions
+public static class CountryExtensions
+{
+    public static CountryResponse ToCountryResponse(this Country country)
     {
-        public static CountryResponse ToCountryResponse(Country country)
+        return new CountryResponse()
         {
-            return new CountryResponse()
-            {
-                CountryId = country.CountryId,
-                CountryName = country.CountryName
-            };
-        }
+            CountryId = country.CountryId,
+            CountryName = country.CountryName
+        };
     }
 }
