@@ -1,4 +1,5 @@
 ﻿using Entities;
+using ServiceContracts.Enums;
 
 namespace ServiceContracts.DTO;
 
@@ -51,6 +52,22 @@ public class PersonResponse
             $"Date of Birth: {DateOfBirth?.ToString("dd MMM yyyy")}," +
             $"Gender: {Gender}, Country Id: {CountryId}, Address: {Address}," +
             $"Receive News Letters: {ReceiveNewsLetters}";
+    }
+
+    public PersonUpdateRequest ToPersonUpdateRequest()
+    {
+        return new PersonUpdateRequest()
+        {
+            Id = ID,
+            Name = Name,
+            Email = Email,
+            DateOfBirth = DateOfBirth,
+            Gender =
+                (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender, true),
+            CountryID = CountryId,
+            Address = Address,
+            ReceiveNewsLetters = ReceiveNewsLetters
+        };
     }
 }
 
