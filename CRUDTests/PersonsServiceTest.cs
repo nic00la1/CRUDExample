@@ -2,6 +2,7 @@
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
+using Xunit.Abstractions;
 
 namespace CRUDTests;
 
@@ -9,11 +10,13 @@ public class PersonsServiceTest
 {
     private readonly IPersonService _personService;
     private readonly ICountriesService _countriesService;
+    private readonly ITestOutputHelper _testOutputHelper;
 
-    public PersonsServiceTest()
+    public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
         _personService = new PersonsService();
         _countriesService = new CountriesService();
+        _testOutputHelper = testOutputHelper;
     }
 
     #region AddPerson
@@ -228,14 +231,28 @@ public class PersonsServiceTest
             person_response_list_from_add.Add(person_response);
         }
 
+        // print the person_response_list_from_add
+        _testOutputHelper.WriteLine("Expected: ");
+
+        foreach (PersonResponse person_response_from_add in
+                 person_response_list_from_add)
+            _testOutputHelper.WriteLine(person_response_from_add.ToString());
+
         // Act 
-        List<PersonResponse> person_list_from_get =
+        List<PersonResponse> persons_list_from_get =
             _personService.GetAllPersons();
+
+        // print the persons_list_from_get
+        _testOutputHelper.WriteLine("Actual: ");
+        foreach (PersonResponse person_response_from_get in
+                 persons_list_from_get
+                )
+            _testOutputHelper.WriteLine(person_response_from_get.ToString());
 
         // Assert
         foreach (PersonResponse person_response_from_add in
                  person_response_list_from_add)
-            Assert.Contains(person_response_from_add, person_list_from_get);
+            Assert.Contains(person_response_from_add, persons_list_from_get);
     }
 
     #endregion
