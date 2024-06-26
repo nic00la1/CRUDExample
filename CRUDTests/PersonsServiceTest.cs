@@ -47,6 +47,59 @@ public class PersonsServiceTest
         };
     }
 
+    private List<PersonAddRequest> CreatePersonRequests()
+    {
+        CountryResponse countryResponse1 =
+            _countriesService.AddCountry(new CountryAddRequest
+                { CountryName = "Poland" });
+        CountryResponse countryResponse2 =
+            _countriesService.AddCountry(new CountryAddRequest
+                { CountryName = "Germany" });
+
+        List<PersonAddRequest> personRequests = new()
+        {
+            CreatePersonAddRequest("Mary", "mary@example.com", "address",
+                countryResponse1.CountryId, DateTime.Parse("1999-04-20"),
+                GenderOptions.Female, true),
+            CreatePersonAddRequest("Rahman", "rahman@gmail.com", "address",
+                countryResponse2.CountryId, DateTime.Parse("1998-04-20"),
+                GenderOptions.Male, false),
+            CreatePersonAddRequest("Smith", "smith@gmail.com", "address",
+                countryResponse2.CountryId, DateTime.Parse("2007-02-3"),
+                GenderOptions.Male, true)
+        };
+
+        return personRequests;
+    }
+
+    private List<PersonResponse> AddPersonsAndReturnResponses(
+        List<PersonAddRequest> personRequests
+    )
+    {
+        List<PersonResponse> personResponses = personRequests
+            .Select(request => _personService.AddPerson(request)).ToList();
+        LogPersonResponses("Expected: ", personResponses);
+        return personResponses;
+    }
+
+    private void LogPersonResponses(string message,
+                                    List<PersonResponse> personResponses
+    )
+    {
+        _testOutputHelper.WriteLine(message);
+        foreach (PersonResponse personResponse in personResponses)
+            _testOutputHelper.WriteLine(personResponse.ToString());
+    }
+
+    private void AssertPersonResponsesInList(
+        List<PersonResponse> expectedResponses,
+        List<PersonResponse> actualResponses
+    )
+    {
+        foreach (PersonResponse expectedResponse in expectedResponses)
+            Assert.Contains(expectedResponse, actualResponses);
+    }
+
     #region AddPerson
 
     // When we supply null value as PersonAddRequest,
@@ -250,51 +303,23 @@ public class PersonsServiceTest
     [Fact]
     public void GetFilteredPersons_EmptySearchText()
     {
-        //Arrange
-        CountryResponse countryResponse1 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Poland" });
-        CountryResponse countryResponse2 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Germany" });
-
-        List<PersonAddRequest> personRequests = new()
-        {
-            CreatePersonAddRequest("Smith", "smith@example.com", "address",
-                countryResponse1.CountryId, DateTime.Parse("1999-04-20"),
-                GenderOptions.Male, true),
-            CreatePersonAddRequest("John", "john@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("1998-04-20"),
-                GenderOptions.Male, false),
-            CreatePersonAddRequest("Hannah", "Hannah@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("2007-02-3"),
-                GenderOptions.Female, true)
-        };
-
-        List<PersonResponse> personResponseListFromAdd = personRequests
-            .Select(request => _personService.AddPerson(request)).ToList();
-
-        // print the person_response_list_from_add
-        _testOutputHelper.WriteLine("Expected: ");
-        foreach (PersonResponse personResponseFromAdd in
-                 personResponseListFromAdd)
-            _testOutputHelper.WriteLine(personResponseFromAdd.ToString());
+        // Arrange
+        List<PersonAddRequest>
+            personRequests =
+                CreatePersonRequests();
+        List<PersonResponse> personResponseListFromAdd =
+            AddPersonsAndReturnResponses(personRequests);
 
         // Act 
         List<PersonResponse> personsListFromSearch =
             _personService.GetFilteredPersons(nameof(Person.Name), "");
 
-        // print the persons_list_from_get
-        _testOutputHelper.WriteLine("Actual: ");
-        foreach (PersonResponse personResponseFromGet in
-                 personsListFromSearch
-                )
-            _testOutputHelper.WriteLine(personResponseFromGet.ToString());
+        // Log actual responses
+        LogPersonResponses("Actual: ", personsListFromSearch);
 
         // Assert
-        foreach (PersonResponse personResponseFromAdd in
-                 personResponseListFromAdd)
-            Assert.Contains(personResponseFromAdd, personsListFromSearch);
+        AssertPersonResponsesInList(personResponseListFromAdd,
+            personsListFromSearch);
     }
 
 
@@ -304,55 +329,33 @@ public class PersonsServiceTest
     [Fact]
     public void GetFilteredPersons_SearchByPersonName()
     {
-        //Arrange
-        CountryResponse countryResponse1 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Poland" });
-        CountryResponse countryResponse2 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Germany" });
-
-        List<PersonAddRequest> personRequests = new()
-        {
-            CreatePersonAddRequest("Mary", "mary@example.com", "address",
-                countryResponse1.CountryId, DateTime.Parse("1999-04-20"),
-                GenderOptions.Female, true),
-            CreatePersonAddRequest("Rahman", "rahman@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("1998-04-20"),
-                GenderOptions.Male, false),
-            CreatePersonAddRequest("Smith", "smith@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("2007-02-3"),
-                GenderOptions.Male, true)
-        };
-
-        List<PersonResponse> personResponseListFromAdd = personRequests
-            .Select(request => _personService.AddPerson(request)).ToList();
-
-        // print the person_response_list_from_add
-        _testOutputHelper.WriteLine("Expected: ");
-        foreach (PersonResponse personResponseFromAdd in
-                 personResponseListFromAdd)
-            _testOutputHelper.WriteLine(personResponseFromAdd.ToString());
+        // Arrange
+        List<PersonAddRequest> personRequests = CreatePersonRequests();
+        List<PersonResponse> personResponseListFromAdd =
+            AddPersonsAndReturnResponses(personRequests);
 
         // Act 
         List<PersonResponse> personsListFromSearch =
             _personService.GetFilteredPersons(nameof(Person.Name), "ma");
 
-        // print the persons_list_from_get
-        _testOutputHelper.WriteLine("Actual: ");
-        foreach (PersonResponse personResponseFromGet in
-                 personsListFromSearch
-                )
-            _testOutputHelper.WriteLine(personResponseFromGet.ToString());
+        // Log expected responses
+        LogPersonResponses("Expected: ",
+            personResponseListFromAdd.Where(p =>
+                    p.Name.Contains("ma", StringComparison.OrdinalIgnoreCase))
+                .ToList());
+
+        // Log actual responses
+        LogPersonResponses("Actual: ", personsListFromSearch);
 
         // Assert
+        // Ensure that each person in the filtered list matches the
+        // search criteria and is present in the initial list
         foreach (PersonResponse personResponseFromAdd in
                  personResponseListFromAdd)
-            if (personResponseFromAdd.Name != null)
-                if (personResponseFromAdd.Name.Contains("ma",
-                        StringComparison.OrdinalIgnoreCase))
-                    Assert.Contains(personResponseFromAdd,
-                        personsListFromSearch);
+            if (personResponseFromAdd.Name != null &&
+                personResponseFromAdd.Name.Contains("ma",
+                    StringComparison.OrdinalIgnoreCase))
+                Assert.Contains(personResponseFromAdd, personsListFromSearch);
     }
 
     #endregion
