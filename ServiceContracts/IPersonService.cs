@@ -53,4 +53,12 @@ public interface IPersonService
                                           string sortBy,
                                           SortOderOptions sortOrder
     );
+
+    /// <summary>
+    /// Updates the specified person details based on given personId
+    /// </summary>
+    /// <param name="personUpdateRequest">Person details to update,
+    /// including person id</param>
+    /// <returns>Returns the person response object after updating</returns>
+    PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest);
 }

@@ -127,4 +127,9 @@ public class PersonsService : IPersonService
         return _personsServiceHelper.SortByProperty(allPersons, sortBy,
             sortOrder);
     }
+
+    public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+    {
+        throw new NotImplementedException();
+    }
 }
