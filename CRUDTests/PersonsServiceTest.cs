@@ -252,4 +252,43 @@ public class PersonsServiceTest
     }
 
     #endregion
+
+    #region GetUpdatedPerson
+
+    // When we sort based on PersonName in DESC,
+    // it should return the persons in descending order
+    [Fact]
+    public void GetSortedPersons()
+    {
+        // Arrange
+        List<PersonAddRequest> personRequests =
+            _personTestHelper.CreatePersonRequests();
+        List<PersonResponse> personResponseListFromAdd =
+            _personTestHelper.AddPersonsAndReturnResponses(personRequests);
+
+        List<PersonResponse> allPersons = _personService.GetAllPersons();
+        // Act 
+        List<PersonResponse> personsListFromSort =
+            _personService.GetSortedPersons(allPersons, nameof(Person.Name),
+                SortOderOptions.DESC);
+
+        // Log expected responses
+        _personTestHelper.LogPersonResponses("Expected: ",
+            personResponseListFromAdd.Where(p =>
+                    p.Name.Contains("ma", StringComparison.OrdinalIgnoreCase))
+                .ToList());
+
+        // Log actual responses
+        _personTestHelper.LogPersonResponses("Actual: ", personsListFromSort);
+
+        personResponseListFromAdd =
+            personResponseListFromAdd.OrderByDescending(temp => temp.Name)
+                .ToList();
+
+        // Assert
+        for (int i = 0; i < personResponseListFromAdd.Count; i++)
+            Assert.Equal(personResponseListFromAdd[i], personsListFromSort[i]);
+    }
+
+    #endregion
 }

@@ -5,6 +5,7 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using Services.Helpers;
 using System.Reflection;
+using ServiceContracts.Enums;
 
 namespace Services;
 
@@ -110,5 +111,14 @@ public class PersonsService : IPersonService
         }).ToList();
 
         return filteredPersons;
+    }
+
+    public List<PersonResponse> GetSortedPersons(
+        List<PersonResponse> allPersons,
+        string sortBy,
+        SortOderOptions sortOder
+    )
+    {
+        throw new NotImplementedException();
     }
 }
