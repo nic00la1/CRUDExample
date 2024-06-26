@@ -130,6 +130,30 @@ public class PersonsService : IPersonService
 
     public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
     {
-        throw new NotImplementedException();
+        if (personUpdateRequest == null)
+            throw new ArgumentNullException(nameof(Person));
+
+        // Validation
+        ValidationHelper.ModelValidation(personUpdateRequest);
+
+        // Get matching person object to update
+        Person? matchingPerson = _persons.FirstOrDefault(p =>
+            p.Id == personUpdateRequest.Id);
+
+        if (matchingPerson == null)
+            throw new ArgumentException("Given person id doesn't exist!");
+
+        // Update all details
+        matchingPerson.Name = personUpdateRequest.Name;
+        matchingPerson.DateOfBirth = personUpdateRequest.DateOfBirth;
+        matchingPerson.Email = personUpdateRequest.Email;
+        matchingPerson.CountryID = personUpdateRequest.CountryID;
+        matchingPerson.Gender = personUpdateRequest.Gender.ToString();
+        matchingPerson.Address = personUpdateRequest.Address;
+        matchingPerson.ReceiveNewsLetters =
+            personUpdateRequest.ReceiveNewsLetters;
+
+
+        return matchingPerson.ToPersonResponse();
     }
 }

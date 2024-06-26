@@ -348,7 +348,11 @@ public class PersonsServiceTest
 
         PersonAddRequest personAddRequest = new()
         {
-            Name = "John", CountryID = countryResponseFromAdd.CountryId
+            Name = "John",
+            CountryID = countryResponseFromAdd.CountryId,
+            Address = "Abc road",
+            Gender = GenderOptions.Male,
+            Email = "john@example.com"
         };
 
         PersonResponse personResponseFromAdd =
