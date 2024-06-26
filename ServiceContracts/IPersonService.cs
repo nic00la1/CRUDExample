@@ -20,4 +20,11 @@ public interface IPersonService
     /// </summary>
     /// <returns>Returns a list of objects of PersonResponse type</returns>
     List<PersonResponse> GetAllPersons();
+
+    /// <summary>
+    /// Returns the person object based on the given personId
+    /// </summary>
+    /// <param name="personId">Person id to search</param>
+    /// <returns>Returns matching person object</returns>
+    PersonResponse? GetPersonById(Guid? personId);
 }
