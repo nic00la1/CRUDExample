@@ -1,6 +1,8 @@
-﻿using Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using Services.Helpers;
 
 namespace Services;
 
@@ -33,9 +35,8 @@ public class PersonsService : IPersonService
         if (personAddRequest == null)
             throw new ArgumentNullException(nameof(personAddRequest));
 
-        // Validate PersonName
-        if (string.IsNullOrEmpty(personAddRequest.Name))
-            throw new ArgumentException("Person Name is required");
+        // Model Validation
+        ValidationHelper.ModelValidation(personAddRequest);
 
         // Convert personAddRequest into Person type
         Person person = personAddRequest.ToPerson();
