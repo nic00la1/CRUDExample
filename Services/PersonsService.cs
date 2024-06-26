@@ -13,11 +13,13 @@ public class PersonsService : IPersonService
 {
     private readonly List<Person> _persons;
     private readonly CountriesService _countriesService;
+    private readonly PersonsServiceHelper _personsServiceHelper;
 
     public PersonsService()
     {
         _persons = new List<Person>();
         _countriesService = new CountriesService();
+        _personsServiceHelper = new PersonsServiceHelper();
     }
 
     private PersonResponse ConvertPersonToPersonResponse(Person person)
@@ -116,9 +118,13 @@ public class PersonsService : IPersonService
     public List<PersonResponse> GetSortedPersons(
         List<PersonResponse> allPersons,
         string sortBy,
-        SortOderOptions sortOder
+        SortOderOptions sortOrder
     )
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(sortBy)) return allPersons;
+
+        // Use the SortByProperty method from PersonsServiceHelper
+        return _personsServiceHelper.SortByProperty(allPersons, sortBy,
+            sortOrder);
     }
 }

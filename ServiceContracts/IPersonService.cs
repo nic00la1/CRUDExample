@@ -47,10 +47,10 @@ public interface IPersonService
     /// <param name="allPersons">Represents lift of persons to sort</param>
     /// <param name="sortBy">Name of the property (key), based on
     /// which the persons should be sorted</param>
-    /// <param name="sortOder">ASC or DESC</param>
+    /// <param name="sortOrder">ASC or DESC</param>
     /// <returns>Returns sorted persons as PersonResponse list</returns>
     List<PersonResponse> GetSortedPersons(List<PersonResponse> allPersons,
                                           string sortBy,
-                                          SortOderOptions sortOder
+                                          SortOderOptions sortOrder
     );
 }
