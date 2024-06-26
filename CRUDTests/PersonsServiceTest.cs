@@ -100,6 +100,24 @@ public class PersonsServiceTest
             Assert.Contains(expectedResponse, actualResponses);
     }
 
+    private PersonResponse CreateAndAddPerson(string name,
+                                              string email,
+                                              string address,
+                                              string countryName,
+                                              DateTime dateOfBirth,
+                                              GenderOptions gender,
+                                              bool receiveNewsLetters
+    )
+    {
+        CountryResponse countryResponse =
+            _countriesService.AddCountry(new CountryAddRequest
+                { CountryName = countryName });
+        PersonAddRequest personRequest = CreatePersonAddRequest(name, email,
+            address, countryResponse.CountryId, dateOfBirth, gender,
+            receiveNewsLetters);
+        return _personService.AddPerson(personRequest);
+    }
+
     #region AddPerson
 
     // When we supply null value as PersonAddRequest,
@@ -195,22 +213,17 @@ public class PersonsServiceTest
     public void GetPersonById_WithPersonID()
     {
         // Arrange
-        CountryResponse countryResponse =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Poland" });
-        PersonAddRequest personRequest = CreatePersonAddRequest(
+        PersonResponse personResponseFromAdd = CreateAndAddPerson(
             "Nicola Kaleta",
             "email@sample.com",
             "address",
-            countryResponse.CountryId,
+            "Poland",
             DateTime.Parse("2000-08-16"),
             GenderOptions.Female,
             false
         );
 
         // Act
-        PersonResponse personResponseFromAdd =
-            _personService.AddPerson(personRequest);
         PersonResponse? personResponseFromGet =
             _personService.GetPersonById(personResponseFromAdd.ID);
 
@@ -241,54 +254,23 @@ public class PersonsServiceTest
     [Fact]
     public void GetAllPersons_AddFewPersons()
     {
-        //Arrange & Act
-        CountryResponse countryResponse1 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Poland" });
-        CountryResponse countryResponse2 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Germany" });
-
-
-        List<PersonAddRequest> personRequests = new()
-        {
-            CreatePersonAddRequest("Smith", "smith@example.com", "address",
-                countryResponse1.CountryId, DateTime.Parse("1999-04-20"),
-                GenderOptions.Male, true),
-            CreatePersonAddRequest("John", "john@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("1998-04-20"),
-                GenderOptions.Male, false),
-            CreatePersonAddRequest("Hannah", "Hannah@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("2007-02-3"),
-                GenderOptions.Female, true)
-        };
-
-
-        List<PersonResponse> personResponseListFromAdd = new();
-
-        foreach (PersonAddRequest personRequest in personRequests)
-        {
-            PersonResponse personResponse =
-                _personService.AddPerson(personRequest);
-            personResponseListFromAdd.Add(personResponse);
-        }
-
-        // print the person_response_list_from_add
-        _testOutputHelper.WriteLine("Expected: ");
-        foreach (PersonResponse personResponseFromAdd in
-                 personResponseListFromAdd)
-            _testOutputHelper.WriteLine(personResponseFromAdd.ToString());
+        // Arrange
+        List<PersonAddRequest> personRequests = CreatePersonRequests();
+        List<PersonResponse> personResponseListFromAdd =
+            AddPersonsAndReturnResponses(personRequests);
 
         // Act 
         List<PersonResponse> personsListFromGet =
             _personService.GetAllPersons();
 
-        // print the persons_list_from_get
-        _testOutputHelper.WriteLine("Actual: ");
-        foreach (PersonResponse personResponseFromGet in personsListFromGet)
-            _testOutputHelper.WriteLine(personResponseFromGet.ToString());
+        // Log expected responses
+        LogPersonResponses("Expected: ", personResponseListFromAdd);
+
+        // Log actual responses
+        LogPersonResponses("Actual: ", personsListFromGet);
 
         // Assert
+        // Ensure that each person added is present in the list returned by GetAllPersons
         foreach (PersonResponse personResponseFromAdd in
                  personResponseListFromAdd)
             Assert.Contains(personResponseFromAdd, personsListFromGet);
