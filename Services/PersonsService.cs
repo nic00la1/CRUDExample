@@ -4,6 +4,7 @@ using Microsoft.VisualBasic;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services.Helpers;
+using System.Reflection;
 
 namespace Services;
 
@@ -74,72 +75,40 @@ public class PersonsService : IPersonService
     )
     {
         List<PersonResponse> allPersons = GetAllPersons();
-        List<PersonResponse> matchingPersons = allPersons;
-
         if (string.IsNullOrEmpty(searchBy) ||
-            string.IsNullOrEmpty(searchString)) return matchingPersons;
+            string.IsNullOrEmpty(searchString)) return allPersons;
 
-        switch (searchBy)
+        List<PersonResponse> filteredPersons = allPersons.Where(person =>
         {
-            case nameof(Person.Name):
-                matchingPersons =
-                    allPersons.Where(temp =>
-                        string.IsNullOrEmpty(temp.Name)
-                            ? temp.Name.Contains(searchString,
-                                StringComparison.OrdinalIgnoreCase)
-                            : true).ToList();
-                break;
+            // Use reflection to get the property by name
+            PropertyInfo? propertyInfo =
+                typeof(PersonResponse).GetProperty(searchBy,
+                    BindingFlags.IgnoreCase | BindingFlags.Public |
+                    BindingFlags.Instance);
+            if (propertyInfo != null)
+            {
+                // Get the value of the property
+                object? value = propertyInfo.GetValue(person);
+                if (value != null)
+                {
+                    // Special handling for DateOfBirth as it's a DateTime? and needs to be converted to string
+                    if (propertyInfo.PropertyType == typeof(DateTime?))
+                    {
+                        DateTime? date = (DateTime?)value;
+                        return date?.ToString("dd MMMM yyyy")
+                            .Contains(searchString,
+                                StringComparison.OrdinalIgnoreCase) ?? false;
+                    }
 
-            case nameof(Person.Email):
-                matchingPersons =
-                    allPersons.Where(temp =>
-                        string.IsNullOrEmpty(temp.Email)
-                            ? temp.Email.Contains(searchString,
-                                StringComparison.OrdinalIgnoreCase)
-                            : true).ToList();
-                break;
+                    // Convert the value to string and perform the comparison
+                    return value.ToString()?.Contains(searchString,
+                        StringComparison.OrdinalIgnoreCase) ?? false;
+                }
+            }
 
-            case nameof(Person.DateOfBirth):
-                matchingPersons =
-                    allPersons.Where(temp =>
-                        temp.DateOfBirth != null
-                            ? temp.DateOfBirth.Value.ToString("dd MMMM yyyy")
-                                .Contains(searchString,
-                                    StringComparison.OrdinalIgnoreCase)
-                            : true).ToList();
-                break;
+            return false;
+        }).ToList();
 
-            case nameof(Person.Gender):
-                matchingPersons =
-                    allPersons.Where(temp =>
-                        !string.IsNullOrEmpty(temp.Gender)
-                            ? temp.Gender.Contains(searchString,
-                                StringComparison.OrdinalIgnoreCase)
-                            : true).ToList();
-                break;
-
-            case nameof(Person.CountryID):
-                matchingPersons =
-                    allPersons.Where(temp =>
-                        temp.CountryId != null
-                            ? temp.CountryId.ToString().Contains(searchString,
-                                StringComparison.OrdinalIgnoreCase)
-                            : true).ToList();
-                break;
-
-            case nameof(Person.Address):
-                matchingPersons = allPersons.Where(temp =>
-                    !string.IsNullOrEmpty(temp.Address)
-                        ? temp.Address.Contains(searchString,
-                            StringComparison.OrdinalIgnoreCase)
-                        : true).ToList();
-                break;
-
-            default:
-                matchingPersons = allPersons;
-                break;
-        }
-
-        return matchingPersons;
+        return filteredPersons;
     }
 }
