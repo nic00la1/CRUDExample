@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using CRUDTests.Helpers;
+using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -12,110 +13,15 @@ public class PersonsServiceTest
     private readonly IPersonService _personService;
     private readonly ICountriesService _countriesService;
     private readonly ITestOutputHelper _testOutputHelper;
+    private readonly PersonTestHelper _personTestHelper;
 
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
         _personService = new PersonsService();
         _countriesService = new CountriesService();
         _testOutputHelper = testOutputHelper;
-    }
-
-    private PersonResponse AddPersonAndReturnResponse(PersonAddRequest request)
-    {
-        return _personService.AddPerson(request);
-    }
-
-    private PersonAddRequest CreatePersonAddRequest(
-        string name,
-        string email,
-        string address,
-        Guid countryId,
-        DateTime dateOfBirth,
-        GenderOptions gender,
-        bool receiveNewsLetters
-    )
-    {
-        return new PersonAddRequest
-        {
-            Name = name,
-            Email = email,
-            Address = address,
-            CountryID = countryId,
-            DateOfBirth = dateOfBirth,
-            Gender = gender,
-            ReceiveNewsLetters = receiveNewsLetters
-        };
-    }
-
-    private List<PersonAddRequest> CreatePersonRequests()
-    {
-        CountryResponse countryResponse1 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Poland" });
-        CountryResponse countryResponse2 =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "Germany" });
-
-        List<PersonAddRequest> personRequests = new()
-        {
-            CreatePersonAddRequest("Mary", "mary@example.com", "address",
-                countryResponse1.CountryId, DateTime.Parse("1999-04-20"),
-                GenderOptions.Female, true),
-            CreatePersonAddRequest("Rahman", "rahman@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("1998-04-20"),
-                GenderOptions.Male, false),
-            CreatePersonAddRequest("Smith", "smith@gmail.com", "address",
-                countryResponse2.CountryId, DateTime.Parse("2007-02-3"),
-                GenderOptions.Male, true)
-        };
-
-        return personRequests;
-    }
-
-    private List<PersonResponse> AddPersonsAndReturnResponses(
-        List<PersonAddRequest> personRequests
-    )
-    {
-        List<PersonResponse> personResponses = personRequests
-            .Select(request => _personService.AddPerson(request)).ToList();
-        LogPersonResponses("Expected: ", personResponses);
-        return personResponses;
-    }
-
-    private void LogPersonResponses(string message,
-                                    List<PersonResponse> personResponses
-    )
-    {
-        _testOutputHelper.WriteLine(message);
-        foreach (PersonResponse personResponse in personResponses)
-            _testOutputHelper.WriteLine(personResponse.ToString());
-    }
-
-    private void AssertPersonResponsesInList(
-        List<PersonResponse> expectedResponses,
-        List<PersonResponse> actualResponses
-    )
-    {
-        foreach (PersonResponse expectedResponse in expectedResponses)
-            Assert.Contains(expectedResponse, actualResponses);
-    }
-
-    private PersonResponse CreateAndAddPerson(string name,
-                                              string email,
-                                              string address,
-                                              string countryName,
-                                              DateTime dateOfBirth,
-                                              GenderOptions gender,
-                                              bool receiveNewsLetters
-    )
-    {
-        CountryResponse countryResponse =
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = countryName });
-        PersonAddRequest personRequest = CreatePersonAddRequest(name, email,
-            address, countryResponse.CountryId, dateOfBirth, gender,
-            receiveNewsLetters);
-        return _personService.AddPerson(personRequest);
+        _personTestHelper = new PersonTestHelper(_personService,
+            _countriesService, testOutputHelper);
     }
 
     #region AddPerson
@@ -164,20 +70,21 @@ public class PersonsServiceTest
         CountryResponse countryResponse =
             _countriesService.AddCountry(new CountryAddRequest
                 { CountryName = "TestCountry" });
-        PersonAddRequest personAddRequest = CreatePersonAddRequest(
-            "Nicola Kaleta",
-            "nicola.kaleta@test.com",
-            "sample address",
-            countryResponse.CountryId,
-            DateTime.Parse("2006-08-16"),
-            GenderOptions.Female,
-            true
-        );
+        PersonAddRequest personAddRequest =
+            _personTestHelper.CreatePersonAddRequest(
+                "Nicola Kaleta",
+                "nicola.kaleta@test.com",
+                "sample address",
+                countryResponse.CountryId,
+                DateTime.Parse("2006-08-16"),
+                GenderOptions.Female,
+                true
+            );
 
 
         // Act
         PersonResponse personResponseFromAdd =
-            AddPersonAndReturnResponse(personAddRequest);
+            _personTestHelper.AddPersonAndReturnResponse(personAddRequest);
         List<PersonResponse> personList = _personService.GetAllPersons();
 
 
@@ -213,15 +120,16 @@ public class PersonsServiceTest
     public void GetPersonById_WithPersonID()
     {
         // Arrange
-        PersonResponse personResponseFromAdd = CreateAndAddPerson(
-            "Nicola Kaleta",
-            "email@sample.com",
-            "address",
-            "Poland",
-            DateTime.Parse("2000-08-16"),
-            GenderOptions.Female,
-            false
-        );
+        PersonResponse personResponseFromAdd =
+            _personTestHelper.CreateAndAddPerson(
+                "Nicola Kaleta",
+                "email@sample.com",
+                "address",
+                "Poland",
+                DateTime.Parse("2000-08-16"),
+                GenderOptions.Female,
+                false
+            );
 
         // Act
         PersonResponse? personResponseFromGet =
@@ -255,19 +163,21 @@ public class PersonsServiceTest
     public void GetAllPersons_AddFewPersons()
     {
         // Arrange
-        List<PersonAddRequest> personRequests = CreatePersonRequests();
+        List<PersonAddRequest> personRequests =
+            _personTestHelper.CreatePersonRequests();
         List<PersonResponse> personResponseListFromAdd =
-            AddPersonsAndReturnResponses(personRequests);
+            _personTestHelper.AddPersonsAndReturnResponses(personRequests);
 
         // Act 
         List<PersonResponse> personsListFromGet =
             _personService.GetAllPersons();
 
         // Log expected responses
-        LogPersonResponses("Expected: ", personResponseListFromAdd);
+        _personTestHelper.LogPersonResponses("Expected: ",
+            personResponseListFromAdd);
 
         // Log actual responses
-        LogPersonResponses("Actual: ", personsListFromGet);
+        _personTestHelper.LogPersonResponses("Actual: ", personsListFromGet);
 
         // Assert
         // Ensure that each person added is present in the list returned by GetAllPersons
@@ -288,19 +198,19 @@ public class PersonsServiceTest
         // Arrange
         List<PersonAddRequest>
             personRequests =
-                CreatePersonRequests();
+                _personTestHelper.CreatePersonRequests();
         List<PersonResponse> personResponseListFromAdd =
-            AddPersonsAndReturnResponses(personRequests);
+            _personTestHelper.AddPersonsAndReturnResponses(personRequests);
 
         // Act 
         List<PersonResponse> personsListFromSearch =
             _personService.GetFilteredPersons(nameof(Person.Name), "");
 
         // Log actual responses
-        LogPersonResponses("Actual: ", personsListFromSearch);
+        _personTestHelper.LogPersonResponses("Actual: ", personsListFromSearch);
 
         // Assert
-        AssertPersonResponsesInList(personResponseListFromAdd,
+        _personTestHelper.AssertPersonResponsesInList(personResponseListFromAdd,
             personsListFromSearch);
     }
 
@@ -312,22 +222,23 @@ public class PersonsServiceTest
     public void GetFilteredPersons_SearchByPersonName()
     {
         // Arrange
-        List<PersonAddRequest> personRequests = CreatePersonRequests();
+        List<PersonAddRequest> personRequests =
+            _personTestHelper.CreatePersonRequests();
         List<PersonResponse> personResponseListFromAdd =
-            AddPersonsAndReturnResponses(personRequests);
+            _personTestHelper.AddPersonsAndReturnResponses(personRequests);
 
         // Act 
         List<PersonResponse> personsListFromSearch =
             _personService.GetFilteredPersons(nameof(Person.Name), "ma");
 
         // Log expected responses
-        LogPersonResponses("Expected: ",
+        _personTestHelper.LogPersonResponses("Expected: ",
             personResponseListFromAdd.Where(p =>
                     p.Name.Contains("ma", StringComparison.OrdinalIgnoreCase))
                 .ToList());
 
         // Log actual responses
-        LogPersonResponses("Actual: ", personsListFromSearch);
+        _personTestHelper.LogPersonResponses("Actual: ", personsListFromSearch);
 
         // Assert
         // Ensure that each person in the filtered list matches the
