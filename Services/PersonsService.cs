@@ -53,7 +53,7 @@ public class PersonsService : IPersonService
 
     public List<PersonResponse> GetAllPersons()
     {
-        throw new NotImplementedException();
+        return _persons.Select(p => p.ToPersonResponse()).ToList();
     }
 
     public PersonResponse? GetPersonById(Guid? personId)
