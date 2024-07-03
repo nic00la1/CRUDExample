@@ -464,7 +464,7 @@ public class PersonsServiceTest
         bool isDeleted = _personService.DeletePerson(Guid.NewGuid());
 
         // Assert
-        Assert.True(isDeleted);
+        Assert.False(isDeleted);
     }
 
     #endregion

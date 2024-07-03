@@ -159,6 +159,14 @@ public class PersonsService : IPersonService
 
     public bool DeletePerson(Guid? PersonId)
     {
-        throw new NotImplementedException();
+        if (PersonId == null) throw new ArgumentNullException(nameof(PersonId));
+
+        Person? person = _persons.FirstOrDefault(temp => temp.Id == PersonId);
+
+        if (person == null) return false;
+
+        _persons.RemoveAll(temp => temp.Id == PersonId);
+
+        return true;
     }
 }
