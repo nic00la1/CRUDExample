@@ -419,4 +419,53 @@ public class PersonsServiceTest
     }
 
     #endregion
+
+    #region DeletePerson
+
+    // If you supply an valid PersonId, it should return true
+    [Fact]
+    public void DeletePerson_ValidPersonId()
+    {
+        // Arrange
+        CountryAddRequest countryAddRequest = new()
+        {
+            CountryName = "USA"
+        };
+
+        CountryResponse countryResponseFromAdd =
+            _countriesService.AddCountry(countryAddRequest);
+
+        PersonAddRequest personAddRequest = new()
+        {
+            Name = "Jones",
+            CountryID = countryResponseFromAdd.CountryId,
+            Address = "address",
+            DateOfBirth = DateTime.Parse("2010-01-01"),
+            Email = "abc@example.pl",
+            ReceiveNewsLetters = true,
+            Gender = GenderOptions.Male
+        };
+
+        PersonResponse personResponseFromAdd =
+            _personService.AddPerson(personAddRequest);
+
+        // Act
+        bool isDeleted = _personService.DeletePerson(personResponseFromAdd.ID);
+
+        // Assert
+        Assert.True(isDeleted);
+    }
+
+    // If you supply an invalid PersonId, it should return false
+    [Fact]
+    public void DeletePerson_InvalidPersonId()
+    {
+        // Act
+        bool isDeleted = _personService.DeletePerson(Guid.NewGuid());
+
+        // Assert
+        Assert.True(isDeleted);
+    }
+
+    #endregion
 }

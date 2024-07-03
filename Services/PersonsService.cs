@@ -156,4 +156,9 @@ public class PersonsService : IPersonService
 
         return matchingPerson.ToPersonResponse();
     }
+
+    public bool DeletePerson(Guid? PersonId)
+    {
+        throw new NotImplementedException();
+    }
 }
