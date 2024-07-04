@@ -15,11 +15,129 @@ public class PersonsService : IPersonService
     private readonly CountriesService _countriesService;
     private readonly PersonsServiceHelper _personsServiceHelper;
 
-    public PersonsService()
+    public PersonsService(bool initialize = true)
     {
         _persons = new List<Person>();
         _countriesService = new CountriesService();
         _personsServiceHelper = new PersonsServiceHelper();
+
+        if (initialize)
+            // {C737E32D-A924-447D-BB13-50331D35579A}
+            // {B8BC36E0-48FF-49EB-BC7E-BF9F28BB7C70}
+            // {D3D3D3D3-D3D3-D3D3-D3D3-D3D3D3D3D3D3}
+            // {E5E5E5E5-E5E5-E5E5-E5E5-E5E5E5E5E5E5}
+            // {F5F5F5F5-F5F5-F5F5-F5F5-F5F5F5F5F5F5}
+            _persons.AddRange(new List<Person>()
+            {
+                new()
+                {
+                    Id = Guid.Parse("C737E32D-A924-447D-BB13-50331D35579A"),
+                    Name = "Joletta",
+                    Email = "jduchart0@indiegogo.com",
+                    DateOfBirth = new DateTime(1994, 3, 15),
+                    Gender = "Female",
+                    CountryID =
+                        Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
+                    Address = "27 Brentwood Junction",
+                    ReceiveNewsLetters = false
+                },
+                new()
+                {
+                    Id = Guid.Parse("B8BC36E0-48FF-49EB-BC7E-BF9F28BB7C70"),
+                    Name = "Dex",
+                    Email = "dashton1@fotki.com",
+                    DateOfBirth = new DateTime(2005, 12, 2),
+                    Gender = "Male",
+                    CountryID =
+                        Guid.Parse("C35C19BD-01DD-4F3D-912C-F4C962646F7E"),
+                    Address = "6 Artisan Hill",
+                    ReceiveNewsLetters = false
+                },
+                new()
+                {
+                    Id = Guid.Parse("D3D3D3D3-D3D3-D3D3-D3D3-D3D3D3D3D3D3"),
+                    Name = "Kylila",
+                    Email = "kcosans2@geocities.com",
+                    DateOfBirth = new DateTime(2005, 3, 6),
+                    Gender = "Female",
+                    CountryID =
+                        Guid.Parse("6340C2AD-A46F-4953-A318-A76CCEB19B1B"),
+                    Address = "6044 Buhler Park",
+                    ReceiveNewsLetters = false
+                },
+                new()
+                {
+                    Id = Guid.Parse("E5E5E5E5-E5E5-E5E5-E5E5-E5E5E5E5E5E5"),
+                    Name = "Jocelin",
+                    Email = "jspohr3@paypal.com",
+                    DateOfBirth = new DateTime(1993, 8, 30),
+                    Gender = "Female",
+                    CountryID =
+                        Guid.Parse("6CA1838D-346B-447A-A8C3-901A1B9147C6"),
+                    Address = "2475 Roth Street",
+                    ReceiveNewsLetters = true
+                },
+                new()
+                {
+                    Id = Guid.Parse("F5F5F5F5-F5F5-F5F5-F5F5-F5F5F5F5F5F5"),
+                    Name = "Andria",
+                    Email = "acisar4@amazon.de",
+                    DateOfBirth = new DateTime(1990, 12, 3),
+                    Gender = "Female",
+                    CountryID = Guid.Parse("<CountryID>"),
+                    Address = "8 Lerdahl Way",
+                    ReceiveNewsLetters = false
+                },
+                new()
+                {
+                    Name = "Noella",
+                    Email = "nfretwell5@guardian.co.uk",
+                    DateOfBirth = new DateTime(1998, 1, 8),
+                    Gender = "Female",
+                    Address = "88 Waywood Park",
+                    ReceiveNewsLetters = true
+                },
+
+                new()
+                {
+                    Name = "Jody",
+                    Email = "jbulleyn6@cnbc.com",
+                    DateOfBirth = new DateTime(2000, 1, 7),
+                    Gender = "Female",
+                    Address = "91167 Commercial Park",
+                    ReceiveNewsLetters = true
+                },
+
+                new()
+                {
+                    Name = "Berte",
+                    Email = "bcarletti7@ehow.com",
+                    DateOfBirth = new DateTime(1999, 8, 25),
+                    Gender = "Female",
+                    Address = "34682 Dahle Parkway",
+                    ReceiveNewsLetters = false
+                },
+
+                new()
+                {
+                    Name = "Palmer",
+                    Email = "paish8@noaa.gov",
+                    DateOfBirth = new DateTime(1996, 8, 13),
+                    Gender = "Male",
+                    Address = "5 Oriole Terrace",
+                    ReceiveNewsLetters = true
+                },
+
+                new()
+                {
+                    Name = "Cari",
+                    Email = "cbrotherhed9@baidu.com",
+                    DateOfBirth = new DateTime(2001, 12, 9),
+                    Gender = "Female",
+                    Address = "16 Miller Court",
+                    ReceiveNewsLetters = true
+                }
+            });
     }
 
     private PersonResponse ConvertPersonToPersonResponse(Person person)
