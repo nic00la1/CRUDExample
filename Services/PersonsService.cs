@@ -84,26 +84,33 @@ public class PersonsService : IPersonService
                     Email = "acisar4@amazon.de",
                     DateOfBirth = new DateTime(1990, 12, 3),
                     Gender = "Female",
-                    CountryID = Guid.Parse("<CountryID>"),
+                    CountryID =
+                        Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
                     Address = "8 Lerdahl Way",
                     ReceiveNewsLetters = false
                 },
                 new()
                 {
+                    Id = Guid.Parse("6340C2AD-A46F-4953-A318-A76CCEB19B1B"),
                     Name = "Noella",
                     Email = "nfretwell5@guardian.co.uk",
                     DateOfBirth = new DateTime(1998, 1, 8),
                     Gender = "Female",
+                    CountryID =
+                        Guid.Parse("6340C2AD-A46F-4953-A318-A76CCEB19B1B"),
                     Address = "88 Waywood Park",
                     ReceiveNewsLetters = true
                 },
 
                 new()
                 {
+                    Id = Guid.Parse("6CA1838D-346B-447A-A8C3-901A1B9147C6"),
                     Name = "Jody",
                     Email = "jbulleyn6@cnbc.com",
                     DateOfBirth = new DateTime(2000, 1, 7),
                     Gender = "Female",
+                    CountryID =
+                        Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
                     Address = "91167 Commercial Park",
                     ReceiveNewsLetters = true
                 },
@@ -114,6 +121,8 @@ public class PersonsService : IPersonService
                     Email = "bcarletti7@ehow.com",
                     DateOfBirth = new DateTime(1999, 8, 25),
                     Gender = "Female",
+                    CountryID =
+                        Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
                     Address = "34682 Dahle Parkway",
                     ReceiveNewsLetters = false
                 },
@@ -124,16 +133,21 @@ public class PersonsService : IPersonService
                     Email = "paish8@noaa.gov",
                     DateOfBirth = new DateTime(1996, 8, 13),
                     Gender = "Male",
+                    CountryID =
+                        Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
                     Address = "5 Oriole Terrace",
                     ReceiveNewsLetters = true
                 },
 
                 new()
                 {
+                    Id = Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
                     Name = "Cari",
                     Email = "cbrotherhed9@baidu.com",
                     DateOfBirth = new DateTime(2001, 12, 9),
                     Gender = "Female",
+                    CountryID =
+                        Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
                     Address = "16 Miller Court",
                     ReceiveNewsLetters = true
                 }

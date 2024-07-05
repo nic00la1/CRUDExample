@@ -91,7 +91,8 @@ public static class PersonExtensions
             Age = person.DateOfBirth != null
                 ? Math.Round((DateTime.Now - person.DateOfBirth.Value)
                     .TotalDays / 365.25)
-                : null
+                : null,
+            Address = person.Address
         };
     }
 }
