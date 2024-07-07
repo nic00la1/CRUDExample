@@ -7,9 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Shared\_GridColumnHeader.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Entitiess\Entities.csproj" />
     <ProjectReference Include="..\ServiceContracts\ServiceContracts.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Persons\_GridColumnHeader.cshtml" />
   </ItemGroup>
 
 </Project>

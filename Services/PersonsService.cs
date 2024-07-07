@@ -190,7 +190,7 @@ public class PersonsService : IPersonService
 
     public List<PersonResponse> GetAllPersons()
     {
-        return _persons.Select(p => p.ToPersonResponse()).ToList();
+        return _persons.Select(p => ConvertPersonToPersonResponse(p)).ToList();
     }
 
     public PersonResponse? GetPersonById(Guid? personId)
@@ -201,7 +201,7 @@ public class PersonsService : IPersonService
 
         if (person == null) return null;
 
-        return person.ToPersonResponse();
+        return ConvertPersonToPersonResponse(person);
     }
 
     public List<PersonResponse> GetFilteredPersons(
@@ -286,7 +286,7 @@ public class PersonsService : IPersonService
             personUpdateRequest.ReceiveNewsLetters;
 
 
-        return matchingPerson.ToPersonResponse();
+        return ConvertPersonToPersonResponse(matchingPerson);
     }
 
     public bool DeletePerson(Guid? PersonId)
