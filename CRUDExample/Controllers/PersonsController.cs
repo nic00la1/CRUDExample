@@ -47,6 +47,6 @@ public class PersonsController : Controller
         ViewBag.CurrentSortBy = sortBy;
         ViewBag.CurrentSortOrder = sortOrder.ToString();
 
-        return View(persons);
+        return View(sortedPersons);
     }
 }
