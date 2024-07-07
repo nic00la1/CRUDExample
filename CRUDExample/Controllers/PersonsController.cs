@@ -15,7 +15,7 @@ public class PersonsController : Controller
 
     [Route("persons/index")]
     [Route("/")]
-    public IActionResult Index()
+    public IActionResult Index(string searchBy, string? searchString)
     {
         ViewBag.SearchFields = new Dictionary<string, string>()
         {
@@ -27,7 +27,12 @@ public class PersonsController : Controller
             { nameof(PersonResponse.Address), "Address" }
         };
 
-        List<PersonResponse> persons = _personService.GetAllPersons();
+        List<PersonResponse> persons =
+            _personService.GetFilteredPersons(searchBy, searchString);
+
+        ViewBag.CurrentSearchBy = searchBy;
+        ViewBag.CurrentSearchString = searchString;
+
         return View(persons);
     }
 }
