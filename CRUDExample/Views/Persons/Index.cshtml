@@ -35,9 +35,32 @@
 </div>
 <table class="table w-100 mt">
     <thead>
-    <tr>
-        <th>Person Name</th>
-        <th>Email</th>
+            <tr>
+
+                @if (ViewBag.CurrentSortBy == nameof(PersonResponse.Name) && ViewBag.CurrentSortOrder == SortOderOptions.ASC.ToString())
+    {
+        <th>
+            <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.Name)&sortOrder=@nameof(SortOderOptions.DESC)">Person Name
+            </a>
+            <i class="fa-solid fa-sort-up"></i>
+        </th>
+            }
+            else if (ViewBag.CurrentSortBy == nameof(PersonResponse.Name) && ViewBag.CurrentSortOrder == SortOderOptions.DESC.ToString())
+            {
+
+                <th>
+                    <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.Name)&sortOrder=@nameof(SortOderOptions.ASC)">Person Name
+                    </a>
+                        <i class="fa-solid fa-sort-down"></i>
+                </th>
+            } else
+            {
+                <th>
+                    <a href="~/persons/index?searchBy=@ViewBag.CurrentSearchBy&searchString=@ViewBag.CurrentSearchString&sortBy=@nameof(PersonResponse.Name)&sortOrder=@nameof(SortOderOptions.ASC)">Person Name
+                        </a>
+                </th>
+            }
+        <th><a href="~/">Email</a></th>
         <th>Date of Birth</th>
         <th>Age</th>
         <th>Gender</th>
