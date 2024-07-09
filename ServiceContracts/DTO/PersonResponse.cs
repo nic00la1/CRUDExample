@@ -92,7 +92,8 @@ public static class PersonExtensions
                 ? Math.Round((DateTime.Now - person.DateOfBirth.Value)
                     .TotalDays / 365.25)
                 : null,
-            Address = person.Address
+            Address = person.Address,
+            ReceiveNewsLetters = person.ReceiveNewsLetters
         };
     }
 }

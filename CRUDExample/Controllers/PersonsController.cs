@@ -65,4 +65,29 @@ public class PersonsController : Controller
 
         return View();
     }
+
+    [HttpPost]
+    [Route("persons/create")]
+    public IActionResult Create(PersonAddRequest personAddRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            List<CountryResponse> countries =
+                _countriesService.GetAllCountries();
+            ViewBag.Countries = countries;
+
+            ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage).ToList();
+            return View();
+        }
+
+        // Call the AddPerson method of the PersonService
+        PersonResponse personResponse =
+            _personService.AddPerson(personAddRequest);
+
+
+
+        // Redirect to the Index action of the PersonsController
+        return RedirectToAction("Index", "Persons");
+    }
 }
