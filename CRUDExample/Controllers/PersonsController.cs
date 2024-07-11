@@ -63,8 +63,12 @@ public class PersonsController : Controller
     public IActionResult Create()
     {
         List<CountryResponse> countries = _countriesService.GetAllCountries();
-        ViewBag.Countries = countries.Select(c => new SelectListItem()
-            { Text = c.CountryName, Value = c.CountryId.ToString() });
+
+        ViewBag.Countries = countries.Select(country => new SelectListItem
+        {
+            Text = country.CountryName,
+            Value = country.CountryId.ToString()
+        }).ToList();
 
 
         //new SelectListItem()
@@ -85,11 +89,16 @@ public class PersonsController : Controller
         {
             List<CountryResponse> countries =
                 _countriesService.GetAllCountries();
-            ViewBag.Countries = countries;
+            ViewBag.Countries = countries.Select(country => new SelectListItem
+            {
+                Text = country.CountryName,
+                Value = country.CountryId.ToString()
+            }).ToList();
 
             ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
                 .Select(e => e.ErrorMessage).ToList();
-            return View();
+            return
+                View(personAddRequest); // Ensure to pass back the model to preserve user input
         }
 
         // Call the AddPerson method of the PersonService
