@@ -93,7 +93,9 @@ public static class PersonExtensions
                     .TotalDays / 365.25)
                 : null,
             Address = person.Address,
-            ReceiveNewsLetters = person.ReceiveNewsLetters
+            ReceiveNewsLetters = person.ReceiveNewsLetters,
+            CountryId =
+                person.CountryID // Assuming Person has a CountryId property
         };
     }
 }

@@ -19,7 +19,7 @@ public class PersonUpdateRequest
     [EmailAddress(ErrorMessage = "Email value should be a valid email")]
     public string? Email { get; set; }
 
-    public DateTime? DateOfBirth { get; set; }
+    [DataType(DataType.Date)] public DateTime? DateOfBirth { get; set; }
     public GenderOptions? Gender { get; set; }
     public Guid? CountryID { get; set; }
     public string? Address { get; set; }

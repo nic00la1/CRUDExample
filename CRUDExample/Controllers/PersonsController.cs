@@ -109,4 +109,58 @@ public class PersonsController : Controller
         // Redirect to the Index action of the PersonsController
         return RedirectToAction("Index", "Persons");
     }
+
+    [HttpGet]
+    [Route("[action]/{personID}")] // Eg: /persons/edit/1
+    public IActionResult Edit(Guid personID)
+    {
+        PersonResponse? personResponse = _personService.GetPersonById(personID);
+
+        if (personResponse == null) return RedirectToAction("Index");
+
+        PersonUpdateRequest personUpdateRequest =
+            personResponse.ToPersonUpdateRequest();
+
+        List<CountryResponse> countries =
+            _countriesService.GetAllCountries();
+
+        ViewBag.Countries = countries.Select(country => new SelectListItem
+        {
+            Text = country.CountryName,
+            Value = country.CountryId.ToString()
+        }).ToList();
+
+        return View(personUpdateRequest);
+    }
+
+    [HttpPost]
+    [Route("[action]/{personID}")]
+    public IActionResult Edit(PersonUpdateRequest personUpdateRequest)
+    {
+        PersonResponse? personResponse =
+            _personService.GetPersonById(personUpdateRequest.Id);
+
+        if (personResponse == null) return RedirectToAction("Index");
+
+        if (ModelState.IsValid)
+        {
+            PersonResponse updatedPerson =
+                _personService.UpdatePerson(personUpdateRequest);
+
+            return RedirectToAction("Index");
+        }
+
+        List<CountryResponse> countries =
+            _countriesService.GetAllCountries();
+        ViewBag.Countries = countries.Select(country => new SelectListItem
+        {
+            Text = country.CountryName,
+            Value = country.CountryId.ToString()
+        }).ToList();
+
+        ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage).ToList();
+        return
+            View(); // Ensure to pass back the model to preserve user input
+    }
 }

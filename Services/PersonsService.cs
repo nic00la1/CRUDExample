@@ -117,6 +117,7 @@ public class PersonsService : IPersonService
 
                 new()
                 {
+                    Id = Guid.Parse("26D0736C-5CD2-46D2-B545-10669556E9E6"),
                     Name = "Berte",
                     Email = "bcarletti7@ehow.com",
                     DateOfBirth = new DateTime(1999, 8, 25),
@@ -129,6 +130,7 @@ public class PersonsService : IPersonService
 
                 new()
                 {
+                    Id = Guid.Parse("982B0232-562B-4340-BF71-38C71EB90EB3"),
                     Name = "Palmer",
                     Email = "paish8@noaa.gov",
                     DateOfBirth = new DateTime(1996, 8, 13),
@@ -141,7 +143,7 @@ public class PersonsService : IPersonService
 
                 new()
                 {
-                    Id = Guid.Parse("F8B7F2A4-D571-44D9-A9C5-71F8165CB22C"),
+                    Id = Guid.Parse("B0C9FD9B-E9CC-4FAB-8F1D-05C238040DC4"),
                     Name = "Cari",
                     Email = "cbrotherhed9@baidu.com",
                     DateOfBirth = new DateTime(2001, 12, 9),
