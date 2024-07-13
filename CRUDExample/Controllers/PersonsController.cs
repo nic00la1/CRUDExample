@@ -161,6 +161,31 @@ public class PersonsController : Controller
         ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
             .Select(e => e.ErrorMessage).ToList();
         return
-            View(); // Ensure to pass back the model to preserve user input
+            View(personResponse
+                .ToPersonUpdateRequest()); // Ensure to pass back the model to preserve user input
+    }
+
+    [HttpGet]
+    [Route("[action]/{personID}")]
+    public IActionResult Delete(Guid? personID)
+    {
+        PersonResponse? personResponse = _personService.GetPersonById(personID);
+
+        if (personResponse == null) return RedirectToAction("Index");
+
+        return View(personResponse);
+    }
+
+    [HttpPost]
+    [Route("[action]/{personID}")]
+    public IActionResult Delete(PersonUpdateRequest personUpdateRequest)
+    {
+        PersonResponse? personResponse =
+            _personService.GetPersonById(personUpdateRequest.Id);
+
+        if (personResponse == null) return RedirectToAction("Index");
+
+        _personService.DeletePerson(personUpdateRequest.Id);
+        return RedirectToAction("Index");
     }
 }
