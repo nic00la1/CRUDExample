@@ -10,6 +10,11 @@ namespace Entities;
 
 public class PersonsDbContext : DbContext
 {
+    public PersonsDbContext(DbContextOptions<PersonsDbContext> options)
+        : base(options)
+    {
+    }
+
     public DbSet<Country> Countries { get; set; }
     public DbSet<Person> Persons { get; set; }
 
@@ -24,18 +29,20 @@ public class PersonsDbContext : DbContext
         string countriesJson = File.ReadAllText("countries.json");
 
         List<Country> countries =
-            JsonSerializer.Deserialize<List<Country>>(countriesJson);
+            JsonSerializer.Deserialize<List<Country>>(countriesJson)!;
 
-        foreach (Country country in countries)
-            modelBuilder.Entity<Country>().HasData(country);
+        if (countries != null)
+            foreach (Country country in countries)
+                modelBuilder.Entity<Country>().HasData(country);
 
         // Seed data to persons table
         string personsJson = File.ReadAllText("persons.json");
 
         List<Person> persons =
-            JsonSerializer.Deserialize<List<Person>>(personsJson);
+            JsonSerializer.Deserialize<List<Person>>(personsJson)!;
 
-        foreach (Person person in persons)
-            modelBuilder.Entity<Person>().HasData(person);
+        if (persons != null)
+            foreach (Person person in persons)
+                modelBuilder.Entity<Person>().HasData(person);
     }
 }
