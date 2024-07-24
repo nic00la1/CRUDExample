@@ -71,10 +71,29 @@ public class PersonsDbContext : DbContext
             "@CountryID, @Address, @ReceiveNewsLetters", parameters);
     }
 
-    public async Task<int> DeletePersonAsync(Guid Id)
+    public async Task<int> sp_DeletePersonAsync(Guid Id)
     {
         SqlParameter personIdParam = new("@Id", Id);
         return await Database.ExecuteSqlRawAsync("EXEC DeletePerson @Id",
             personIdParam);
+    }
+
+    public async Task<int> UpdatePersonAsync(Person person)
+    {
+        SqlParameter[] parameters = new SqlParameter[]
+        {
+            new("@Id", person.Id),
+            new("@PersonName", person.PersonName),
+            new("@Email", person.Email),
+            new("@DateOfBirth", person.DateOfBirth),
+            new("@Gender", person.Gender),
+            new("@CountryID", person.CountryID),
+            new("@Address", person.Address),
+            new("@ReceiveNewsLetters", person.ReceiveNewsLetters)
+        };
+
+        return await Database.ExecuteSqlRawAsync(
+            "EXEC UpdatePerson @Id, @PersonName, @Email, @DateOfBirth, @Gender, @CountryID, @Address, @ReceiveNewsLetters",
+            parameters);
     }
 }

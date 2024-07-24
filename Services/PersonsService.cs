@@ -143,7 +143,7 @@ public class PersonsService : IPersonService
     public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
     {
         if (personUpdateRequest == null)
-            throw new ArgumentNullException(nameof(Person));
+            throw new ArgumentNullException(nameof(personUpdateRequest));
 
         // Validation
         ValidationHelper.ModelValidation(personUpdateRequest);
@@ -165,20 +165,22 @@ public class PersonsService : IPersonService
         matchingPerson.ReceiveNewsLetters =
             personUpdateRequest.ReceiveNewsLetters;
 
-        _db.SaveChanges(); // UPDATE
+        // Call the stored procedure to update the person
+        _db.UpdatePersonAsync(matchingPerson).GetAwaiter().GetResult();
+
         return ConvertPersonToPersonResponse(matchingPerson);
     }
 
     public bool DeletePerson(Guid? personId)
     {
-        return DeletePersonAsync(personId).GetAwaiter().GetResult();
+        return sp_DeletePersonAsync(personId).GetAwaiter().GetResult();
     }
 
-    public async Task<bool> DeletePersonAsync(Guid? personId)
+    public async Task<bool> sp_DeletePersonAsync(Guid? personId)
     {
         if (personId == null) throw new ArgumentNullException(nameof(personId));
 
-        int result = await _db.DeletePersonAsync(personId.Value);
+        int result = await _db.sp_DeletePersonAsync(personId.Value);
 
         return result > 0;
     }
