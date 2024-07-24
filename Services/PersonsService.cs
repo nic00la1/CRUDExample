@@ -52,10 +52,10 @@ public class PersonsService : IPersonService
         person.Id = Guid.NewGuid();
 
         // Add Person object to persons list
-/*        _db.Persons.Add(person);
+        _db.Persons.Add(person);
         _db.SaveChanges();
-*/
-        _db.sp_InsertPerson(person);
+
+        //         _db.sp_InsertPerson(person);
 
         // Convert Person object into PersonResponse type
         return ConvertPersonToPersonResponse(person);
@@ -64,13 +64,14 @@ public class PersonsService : IPersonService
     public List<PersonResponse> GetAllPersons()
     {
         // SELECT * FROM Persons
-/*        return _db.Persons.ToList()
+        return _db.Persons.ToList()
             .Select(p => ConvertPersonToPersonResponse(p))
             .ToList();
-*/
 
-        return _db.sp_GetAllPersons()
+
+/*        return _db.sp_GetAllPersons()
             .Select(temp => ConvertPersonToPersonResponse(temp)).ToList();
+*/
     }
 
     public PersonResponse? GetPersonById(Guid? personId)
