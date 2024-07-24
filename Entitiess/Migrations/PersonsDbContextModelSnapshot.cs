@@ -87,7 +87,7 @@ namespace Entities.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("PersonName")
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
@@ -107,6 +107,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1989, 8, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mwebsdale0@people.com.cn",
                             Gender = "Female",
+                            PersonName = "Marguerite",
                             ReceiveNewsLetters = false
                         },
                         new
@@ -117,6 +118,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1990, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "ushears1@globo.com",
                             Gender = "Female",
+                            PersonName = "Ursa",
                             ReceiveNewsLetters = false
                         },
                         new
@@ -127,6 +129,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1995, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "fbowsher2@howstuffworks.com",
                             Gender = "Male",
+                            PersonName = "Franchot",
                             ReceiveNewsLetters = true
                         },
                         new
@@ -137,6 +140,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1987, 1, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "asarvar3@dropbox.com",
                             Gender = "Male",
+                            PersonName = "Angie",
                             ReceiveNewsLetters = true
                         },
                         new
@@ -147,6 +151,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1995, 2, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "ttregona4@stumbleupon.com",
                             Gender = "Gender",
+                            PersonName = "Tani",
                             ReceiveNewsLetters = false
                         },
                         new
@@ -157,6 +162,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1988, 1, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mlingfoot5@netvibes.com",
                             Gender = "Male",
+                            PersonName = "Mitchael",
                             ReceiveNewsLetters = false
                         },
                         new
@@ -167,6 +173,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1983, 2, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mjarrell6@wisc.edu",
                             Gender = "Male",
+                            PersonName = "Maddy",
                             ReceiveNewsLetters = true
                         },
                         new
@@ -177,6 +184,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1998, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "pretchford7@virginia.edu",
                             Gender = "Female",
+                            PersonName = "Pegeen",
                             ReceiveNewsLetters = true
                         },
                         new
@@ -187,6 +195,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1990, 9, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "hmosco8@tripod.com",
                             Gender = "Male",
+                            PersonName = "Hansiain",
                             ReceiveNewsLetters = true
                         },
                         new
@@ -197,6 +206,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1997, 9, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "lwoodwing9@wix.com",
                             Gender = "Male",
+                            PersonName = "Lombard",
                             ReceiveNewsLetters = false
                         },
                         new
@@ -207,6 +217,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1990, 5, 24, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "mconachya@va.gov",
                             Gender = "Female",
+                            PersonName = "Minta",
                             ReceiveNewsLetters = true
                         },
                         new
@@ -217,6 +228,7 @@ namespace Entities.Migrations
                             DateOfBirth = new DateTime(1987, 1, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "vklussb@nationalgeographic.com",
                             Gender = "Female",
+                            PersonName = "Verene",
                             ReceiveNewsLetters = true
                         });
                 });

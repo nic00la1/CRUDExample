@@ -1,5 +1,6 @@
 ﻿using CRUDTests.Helpers;
 using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -14,11 +15,20 @@ public class PersonsServiceTest
     private readonly ICountriesService _countriesService;
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly PersonTestHelper _personTestHelper;
+    private readonly PersonsDbContext _dbContext;
 
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
-        _personService = new PersonsService();
-        _countriesService = new CountriesService(false);
+        // Create an in-memory database context for testing
+        DbContextOptions<PersonsDbContext> options =
+            new DbContextOptionsBuilder<PersonsDbContext>()
+                .UseInMemoryDatabase("TestDatabase")
+                .Options;
+
+        _dbContext = new PersonsDbContext(options);
+
+        _countriesService = new CountriesService(_dbContext);
+        _personService = new PersonsService(_dbContext, _countriesService);
         _testOutputHelper = testOutputHelper;
         _personTestHelper = new PersonTestHelper(_personService,
             _countriesService, testOutputHelper);
@@ -204,7 +214,7 @@ public class PersonsServiceTest
 
         // Act 
         List<PersonResponse> personsListFromSearch =
-            _personService.GetFilteredPersons(nameof(Person.Name), "");
+            _personService.GetFilteredPersons(nameof(Person.PersonName), "");
 
         // Log actual responses
         _personTestHelper.LogPersonResponses("Actual: ", personsListFromSearch);
@@ -229,12 +239,13 @@ public class PersonsServiceTest
 
         // Act 
         List<PersonResponse> personsListFromSearch =
-            _personService.GetFilteredPersons(nameof(Person.Name), "ma");
+            _personService.GetFilteredPersons(nameof(Person.PersonName), "ma");
 
         // Log expected responses
         _personTestHelper.LogPersonResponses("Expected: ",
             personResponseListFromAdd.Where(p =>
-                    p.Name.Contains("ma", StringComparison.OrdinalIgnoreCase))
+                    p.PersonName.Contains("ma",
+                        StringComparison.OrdinalIgnoreCase))
                 .ToList());
 
         // Log actual responses
@@ -245,8 +256,8 @@ public class PersonsServiceTest
         // search criteria and is present in the initial list
         foreach (PersonResponse personResponseFromAdd in
                  personResponseListFromAdd)
-            if (personResponseFromAdd.Name != null &&
-                personResponseFromAdd.Name.Contains("ma",
+            if (personResponseFromAdd.PersonName != null &&
+                personResponseFromAdd.PersonName.Contains("ma",
                     StringComparison.OrdinalIgnoreCase))
                 Assert.Contains(personResponseFromAdd, personsListFromSearch);
     }
@@ -269,20 +280,22 @@ public class PersonsServiceTest
         List<PersonResponse> allPersons = _personService.GetAllPersons();
         // Act 
         List<PersonResponse> personsListFromSort =
-            _personService.GetSortedPersons(allPersons, nameof(Person.Name),
+            _personService.GetSortedPersons(allPersons,
+                nameof(Person.PersonName),
                 SortOderOptions.DESC);
 
         // Log expected responses
         _personTestHelper.LogPersonResponses("Expected: ",
             personResponseListFromAdd.Where(p =>
-                    p.Name.Contains("ma", StringComparison.OrdinalIgnoreCase))
+                    p.PersonName.Contains("ma",
+                        StringComparison.OrdinalIgnoreCase))
                 .ToList());
 
         // Log actual responses
         _personTestHelper.LogPersonResponses("Actual: ", personsListFromSort);
 
         personResponseListFromAdd =
-            personResponseListFromAdd.OrderByDescending(temp => temp.Name)
+            personResponseListFromAdd.OrderByDescending(temp => temp.PersonName)
                 .ToList();
 
         // Assert
@@ -361,7 +374,7 @@ public class PersonsServiceTest
         PersonUpdateRequest personUpdateRequest =
             personResponseFromAdd.ToPersonUpdateRequest();
 
-        personUpdateRequest.Name = null;
+        personUpdateRequest.PersonName = null;
 
         // Assert
         Assert.Throws<ArgumentException>(() =>
@@ -403,7 +416,7 @@ public class PersonsServiceTest
         PersonUpdateRequest personUpdateRequest =
             personResponseFromAdd.ToPersonUpdateRequest();
 
-        personUpdateRequest.Name = "William";
+        personUpdateRequest.PersonName = "William";
         personUpdateRequest.Email = "william@example.com";
 
 

@@ -13,7 +13,7 @@ public class PersonUpdateRequest
     public Guid Id { get; set; }
 
     [Required(ErrorMessage = "Person Name can't be blank")]
-    public string? Name { get; set; }
+    public string? PersonName { get; set; }
 
     [Required(ErrorMessage = "Email can't be blank")]
     [EmailAddress(ErrorMessage = "Email value should be a valid email")]
@@ -35,7 +35,7 @@ public class PersonUpdateRequest
         return new Person()
         {
             Id = Id,
-            Name = Name,
+            PersonName = PersonName,
             Email = Email,
             DateOfBirth = DateOfBirth,
             Gender = Gender.ToString(),

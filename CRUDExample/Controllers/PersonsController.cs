@@ -24,14 +24,15 @@ public class PersonsController : Controller
     [Route("/")]
     public IActionResult Index(string searchBy,
                                string? searchString,
-                               string sortBy = nameof(PersonResponse.Name),
+                               string sortBy =
+                                   nameof(PersonResponse.PersonName),
                                SortOderOptions sortOrder = SortOderOptions.ASC
     )
     {
         // Search
         ViewBag.SearchFields = new Dictionary<string, string>()
         {
-            { nameof(PersonResponse.Name), "Person Name" },
+            { nameof(PersonResponse.PersonName), "Person Name" },
             { nameof(PersonResponse.Email), "Email" },
             { nameof(PersonResponse.DateOfBirth), "Date of Birth" },
             { nameof(PersonResponse.Gender), "Gender" },

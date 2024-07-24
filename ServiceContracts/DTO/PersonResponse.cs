@@ -10,7 +10,7 @@ namespace ServiceContracts.DTO;
 public class PersonResponse
 {
     public Guid ID { get; set; }
-    public string? Name { get; set; }
+    public string? PersonName { get; set; }
     public string? Email { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public string? Gender { get; set; }
@@ -34,7 +34,7 @@ public class PersonResponse
 
         PersonResponse person = (PersonResponse)obj;
 
-        return ID == person.ID && Name == person.Name && Email ==
+        return ID == person.ID && PersonName == person.PersonName && Email ==
             person.Email && DateOfBirth == person.DateOfBirth &&
             Gender == person.Gender && CountryId == person.CountryId &&
             Address == person.Address &&
@@ -48,7 +48,7 @@ public class PersonResponse
 
     public override string ToString()
     {
-        return $"Person Id: {ID}, Name: {Name}, Email: {Email}," +
+        return $"Person Id: {ID}, Person Name: {PersonName}, Email: {Email}," +
             $"Date of Birth: {DateOfBirth?.ToString("dd MMM yyyy")}," +
             $"Gender: {Gender}, Country Id: {CountryId}, Address: {Address}," +
             $"Receive News Letters: {ReceiveNewsLetters}";
@@ -59,7 +59,7 @@ public class PersonResponse
         return new PersonUpdateRequest()
         {
             Id = ID,
-            Name = Name,
+            PersonName = PersonName,
             Email = Email,
             DateOfBirth = DateOfBirth,
             Gender =
@@ -84,7 +84,7 @@ public static class PersonExtensions
         return new PersonResponse()
         {
             ID = person.Id,
-            Name = person.Name,
+            PersonName = person.PersonName,
             Email = person.Email,
             DateOfBirth = person.DateOfBirth,
             Gender = person.Gender,

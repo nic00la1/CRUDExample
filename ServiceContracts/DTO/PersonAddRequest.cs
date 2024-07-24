@@ -37,7 +37,7 @@ public class PersonAddRequest
     {
         return new Person()
         {
-            Name = Name,
+            PersonName = Name,
             Email = Email,
             DateOfBirth = DateOfBirth,
             Gender = Gender.ToString(),
