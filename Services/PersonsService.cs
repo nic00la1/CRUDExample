@@ -168,7 +168,7 @@ public class PersonsService : IPersonService
         return matchingPerson.ToPersonResponse();
     }
 
-    public bool DeletePerson(Guid? personId)
+    public async Task<bool> DeletePerson(Guid? personId)
     {
         return sp_DeletePersonAsync(personId).GetAwaiter().GetResult();
     }
