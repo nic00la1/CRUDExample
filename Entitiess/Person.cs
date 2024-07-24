@@ -15,7 +15,10 @@ public class Person
     [Key] public Guid Id { get; set; }
 
     // nvarchar(max)
-    [StringLength(40)] public string? PersonName { get; set; }
+    [StringLength(40)]
+    // [Required] 
+    public string? PersonName { get; set; }
+
     [StringLength(40)] public string? Email { get; set; }
     public DateTime? DateOfBirth { get; set; }
     [StringLength(10)] public string? Gender { get; set; }
