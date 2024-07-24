@@ -52,8 +52,10 @@ public class PersonsService : IPersonService
         person.Id = Guid.NewGuid();
 
         // Add Person object to persons list
-        _db.Persons.Add(person);
+/*        _db.Persons.Add(person);
         _db.SaveChanges();
+*/
+        _db.sp_InsertPerson(person);
 
         // Convert Person object into PersonResponse type
         return ConvertPersonToPersonResponse(person);

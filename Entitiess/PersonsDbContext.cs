@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities;
@@ -49,5 +50,24 @@ public class PersonsDbContext : DbContext
     public List<Person> sp_GetAllPersons()
     {
         return Persons.FromSqlRaw("EXECUTE [dbo].[GetAllPersons]").ToList();
+    }
+
+    public int sp_InsertPerson(Person person)
+    {
+        SqlParameter[] parameters = new SqlParameter[]
+        {
+            new("@Id", person.Id),
+            new("@PersonName", person.PersonName),
+            new("@Email", person.Email),
+            new("@DateOfBirth", person.DateOfBirth),
+            new("@Gender", person.Gender),
+            new("@CountryID", person.CountryID),
+            new("@Address", person.Address),
+            new("@ReceiveNewsLetters", person.ReceiveNewsLetters)
+        };
+
+        return Database.ExecuteSqlRaw("EXECUTE [dbo].[InsertPerson]" +
+            "@Id, @PersonName, @Email, @DateOfBirth, @Gender," +
+            "@CountryID, @Address, @ReceiveNewsLetters", parameters);
     }
 }
