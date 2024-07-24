@@ -62,9 +62,13 @@ public class PersonsService : IPersonService
     public List<PersonResponse> GetAllPersons()
     {
         // SELECT * FROM Persons
-        return _db.Persons.ToList()
+/*        return _db.Persons.ToList()
             .Select(p => ConvertPersonToPersonResponse(p))
             .ToList();
+*/
+
+        return _db.sp_GetAllPersons()
+            .Select(temp => ConvertPersonToPersonResponse(temp)).ToList();
     }
 
     public PersonResponse? GetPersonById(Guid? personId)

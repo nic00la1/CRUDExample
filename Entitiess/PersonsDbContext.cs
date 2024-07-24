@@ -45,4 +45,9 @@ public class PersonsDbContext : DbContext
             foreach (Person person in persons)
                 modelBuilder.Entity<Person>().HasData(person);
     }
+
+    public List<Person> sp_GetAllPersons()
+    {
+        return Persons.FromSqlRaw("EXECUTE [dbo].[GetAllPersons]").ToList();
+    }
 }
