@@ -30,4 +30,6 @@ public class Person
     public bool ReceiveNewsLetters { get; set; }
 
     public string? TIN { get; set; }
+
+    public Country? Country { get; set; }
 }

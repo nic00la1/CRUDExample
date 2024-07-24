@@ -5,6 +5,7 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using Services.Helpers;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts.Enums;
 
 namespace Services;
@@ -23,18 +24,6 @@ public class PersonsService : IPersonService
         _countriesService = countriesService;
         _personsServiceHelper = new PersonsServiceHelper();
     }
-
-    private PersonResponse ConvertPersonToPersonResponse(Person person)
-    {
-        PersonResponse personResponse = person.ToPersonResponse();
-
-        personResponse.Country =
-            _countriesService.GetCountryByCountryId(person.CountryID)
-                ?.CountryName;
-
-        return personResponse;
-    }
-
 
     public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
     {
@@ -58,14 +47,16 @@ public class PersonsService : IPersonService
         //         _db.sp_InsertPerson(person);
 
         // Convert Person object into PersonResponse type
-        return ConvertPersonToPersonResponse(person);
+        return person.ToPersonResponse();
     }
 
     public List<PersonResponse> GetAllPersons()
     {
         // SELECT * FROM Persons
-        return _db.Persons.ToList()
-            .Select(p => ConvertPersonToPersonResponse(p))
+        List<Person> persons = _db.Persons.Include("Country").ToList();
+
+        return persons
+            .Select(p => p.ToPersonResponse())
             .ToList();
 
 
@@ -78,11 +69,12 @@ public class PersonsService : IPersonService
     {
         if (personId == null) return null;
 
-        Person? person = _db.Persons.FirstOrDefault(p => p.Id == personId);
+        Person? person = _db.Persons.Include("Country")
+            .FirstOrDefault(p => p.Id == personId);
 
         if (person == null) return null;
 
-        return ConvertPersonToPersonResponse(person);
+        return person.ToPersonResponse();
     }
 
     public List<PersonResponse> GetFilteredPersons(
@@ -169,7 +161,7 @@ public class PersonsService : IPersonService
         // Call the stored procedure to update the person
         _db.UpdatePersonAsync(matchingPerson).GetAwaiter().GetResult();
 
-        return ConvertPersonToPersonResponse(matchingPerson);
+        return matchingPerson.ToPersonResponse();
     }
 
     public bool DeletePerson(Guid? personId)

@@ -95,7 +95,8 @@ public static class PersonExtensions
             Address = person.Address,
             ReceiveNewsLetters = person.ReceiveNewsLetters,
             CountryId =
-                person.CountryID // Assuming Person has a CountryId property
+                person.CountryID, // Assuming Person has a CountryId property
+            Country = person.Country?.CountryName
         };
     }
 }
