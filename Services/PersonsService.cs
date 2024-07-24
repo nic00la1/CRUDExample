@@ -169,18 +169,17 @@ public class PersonsService : IPersonService
         return ConvertPersonToPersonResponse(matchingPerson);
     }
 
-    public bool DeletePerson(Guid? PersonId)
+    public bool DeletePerson(Guid? personId)
     {
-        if (PersonId == null) throw new ArgumentNullException(nameof(PersonId));
+        return DeletePersonAsync(personId).GetAwaiter().GetResult();
+    }
 
-        Person? person =
-            _db.Persons.FirstOrDefault(temp => temp.Id == PersonId);
+    public async Task<bool> DeletePersonAsync(Guid? personId)
+    {
+        if (personId == null) throw new ArgumentNullException(nameof(personId));
 
-        if (person == null) return false;
+        int result = await _db.DeletePersonAsync(personId.Value);
 
-        _db.Persons.Remove(_db.Persons.First(temp => temp.Id == PersonId));
-        _db.SaveChanges(); // DELETE
-
-        return true;
+        return result > 0;
     }
 }

@@ -70,4 +70,11 @@ public class PersonsDbContext : DbContext
             "@Id, @PersonName, @Email, @DateOfBirth, @Gender," +
             "@CountryID, @Address, @ReceiveNewsLetters", parameters);
     }
+
+    public async Task<int> DeletePersonAsync(Guid Id)
+    {
+        SqlParameter personIdParam = new("@Id", Id);
+        return await Database.ExecuteSqlRawAsync("EXEC DeletePerson @Id",
+            personIdParam);
+    }
 }
