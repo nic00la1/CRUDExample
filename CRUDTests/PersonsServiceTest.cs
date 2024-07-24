@@ -94,7 +94,8 @@ public class PersonsServiceTest
 
         // Act
         PersonResponse personResponseFromAdd =
-            _personTestHelper.AddPersonAndReturnResponse(personAddRequest);
+            await _personTestHelper
+                .AddPersonAndReturnResponse(personAddRequest);
         List<PersonResponse> personList = await _personService.GetAllPersons();
 
 
@@ -130,7 +131,7 @@ public class PersonsServiceTest
     public async Task GetPersonById_WithPersonID()
     {
         // Arrange
-        PersonResponse personResponseFromAdd =
+        PersonResponse personResponseFromAdd = await
             _personTestHelper.CreateAndAddPerson(
                 "Nicola Kaleta",
                 "email@sample.com",
@@ -174,8 +175,8 @@ public class PersonsServiceTest
     {
         // Arrange
         List<PersonAddRequest> personRequests =
-            _personTestHelper.CreatePersonRequests();
-        List<PersonResponse> personResponseListFromAdd =
+            await _personTestHelper.CreatePersonRequests();
+        List<PersonResponse> personResponseListFromAdd = await
             _personTestHelper.AddPersonsAndReturnResponses(personRequests);
 
         // Act 
@@ -208,8 +209,8 @@ public class PersonsServiceTest
         // Arrange
         List<PersonAddRequest>
             personRequests =
-                _personTestHelper.CreatePersonRequests();
-        List<PersonResponse> personResponseListFromAdd =
+                await _personTestHelper.CreatePersonRequests();
+        List<PersonResponse> personResponseListFromAdd = await
             _personTestHelper.AddPersonsAndReturnResponses(personRequests);
 
         // Act 
@@ -232,10 +233,11 @@ public class PersonsServiceTest
     public async Task GetFilteredPersons_SearchByPersonName()
     {
         // Arrange
-        List<PersonAddRequest> personRequests =
+        List<PersonAddRequest> personRequests = await
             _personTestHelper.CreatePersonRequests();
         List<PersonResponse> personResponseListFromAdd =
-            _personTestHelper.AddPersonsAndReturnResponses(personRequests);
+            await _personTestHelper
+                .AddPersonsAndReturnResponses(personRequests);
 
         // Act 
         List<PersonResponse> personsListFromSearch = await
@@ -273,8 +275,8 @@ public class PersonsServiceTest
     {
         // Arrange
         List<PersonAddRequest> personRequests =
-            _personTestHelper.CreatePersonRequests();
-        List<PersonResponse> personResponseListFromAdd =
+            await _personTestHelper.CreatePersonRequests();
+        List<PersonResponse> personResponseListFromAdd = await
             _personTestHelper.AddPersonsAndReturnResponses(personRequests);
 
         List<PersonResponse> allPersons = await _personService.GetAllPersons();

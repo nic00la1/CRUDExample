@@ -21,9 +21,11 @@ public class PersonTestHelper
         _testOutputHelper = testOutputHelper;
     }
 
-    public PersonResponse AddPersonAndReturnResponse(PersonAddRequest request)
+    public async Task<PersonResponse> AddPersonAndReturnResponse(
+        PersonAddRequest request
+    )
     {
-        return _personService.AddPerson(request);
+        return await _personService.AddPerson(request);
     }
 
     public PersonAddRequest CreatePersonAddRequest(
@@ -48,12 +50,12 @@ public class PersonTestHelper
         };
     }
 
-    public List<PersonAddRequest> CreatePersonRequests()
+    public async Task<List<PersonAddRequest>> CreatePersonRequests()
     {
-        CountryResponse countryResponse1 =
+        CountryResponse countryResponse1 = await
             _countriesService.AddCountry(new CountryAddRequest
                 { CountryName = "Poland" });
-        CountryResponse countryResponse2 =
+        CountryResponse countryResponse2 = await
             _countriesService.AddCountry(new CountryAddRequest
                 { CountryName = "Germany" });
 
@@ -73,12 +75,16 @@ public class PersonTestHelper
         return personRequests;
     }
 
-    public List<PersonResponse> AddPersonsAndReturnResponses(
+    public async Task<List<PersonResponse>> AddPersonsAndReturnResponses(
         List<PersonAddRequest> personRequests
     )
     {
-        List<PersonResponse> personResponses = personRequests
+        List<Task<PersonResponse>> personResponseTasks = personRequests
             .Select(request => _personService.AddPerson(request)).ToList();
+
+        List<PersonResponse> personResponses =
+            (await Task.WhenAll(personResponseTasks)).ToList();
+
         LogPersonResponses("Expected: ", personResponses);
         return personResponses;
     }
@@ -101,21 +107,21 @@ public class PersonTestHelper
             Assert.Contains(expectedResponse, actualResponses);
     }
 
-    public PersonResponse CreateAndAddPerson(string name,
-                                             string email,
-                                             string address,
-                                             string countryName,
-                                             DateTime dateOfBirth,
-                                             GenderOptions gender,
-                                             bool receiveNewsLetters
+    public async Task<PersonResponse> CreateAndAddPerson(string name,
+            string email,
+            string address,
+            string countryName,
+            DateTime dateOfBirth,
+            GenderOptions gender,
+            bool receiveNewsLetters
     )
     {
-        CountryResponse countryResponse =
+        CountryResponse countryResponse = await
             _countriesService.AddCountry(new CountryAddRequest
                 { CountryName = countryName });
         PersonAddRequest personRequest = CreatePersonAddRequest(name, email,
             address, countryResponse.CountryId, dateOfBirth, gender,
             receiveNewsLetters);
-        return _personService.AddPerson(personRequest);
+        return await _personService.AddPerson(personRequest);
     }
 }
