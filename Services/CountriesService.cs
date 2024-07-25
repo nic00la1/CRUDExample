@@ -78,34 +78,52 @@ public class CountriesService : ICountriesService
         await formFile.CopyToAsync(memoryStream);
         int countriesInserted = 0;
 
-
-        ExcelPackage excelPackage = new(memoryStream);
-
-        ExcelWorksheet workSheet =
-            excelPackage.Workbook.Worksheets["Countries"];
-
-        int rowCount = workSheet.Dimension.Rows;
-
-        for (int row = 2; row <= rowCount; row++)
+        using (ExcelPackage excelPackage = new(memoryStream))
         {
-            string? cellValue = Convert.ToString(workSheet.Cells[row, 1].Value);
+            ExcelWorksheets? worksheets = excelPackage.Workbook.Worksheets;
+            if (worksheets.Count == 0)
+                throw new Exception(
+                    "The uploaded file does not contain any worksheets. Please check the file and try again.");
 
-            if (!string.IsNullOrEmpty(cellValue))
+            // Log available worksheet names
+            List<string> worksheetNames =
+                worksheets.Select(ws => ws.Name).ToList();
+            Console.WriteLine("Available worksheets: " +
+                string.Join(", ", worksheetNames));
+
+            ExcelWorksheet workSheet = worksheets.FirstOrDefault(ws =>
+                ws.Name.Equals("Countries",
+                    StringComparison.OrdinalIgnoreCase));
+
+            if (workSheet == null)
+                throw new Exception(
+                    "The uploaded file does not contain a worksheet named 'Countries'. Please check the file and try again.");
+
+            int rowCount = workSheet.Dimension?.Rows ?? 0;
+
+            for (int row = 2; row <= rowCount; row++)
             {
-                string? countryName = cellValue;
+                string? cellValue =
+                    Convert.ToString(workSheet.Cells[row, 1].Value);
 
-                if (_db.Countries.Where(temp => temp.CountryName == countryName)
-                        .Count() == 0)
+                if (!string.IsNullOrEmpty(cellValue))
                 {
-                    Country country = new()
+                    string? countryName = cellValue;
+
+                    if (_db.Countries
+                            .Where(temp => temp.CountryName == countryName)
+                            .Count() == 0)
                     {
-                        CountryName = countryName
-                    };
+                        Country country = new()
+                        {
+                            CountryName = countryName
+                        };
 
-                    _db.Countries.Add(country);
-                    await _db.SaveChangesAsync();
+                        _db.Countries.Add(country);
+                        await _db.SaveChangesAsync();
 
-                    countriesInserted++;
+                        countriesInserted++;
+                    }
                 }
             }
         }
