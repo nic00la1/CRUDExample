@@ -73,6 +73,12 @@ public interface IPersonService
     /// <summary>
     /// Return persons as CSV file
     /// </summary>
-    /// <returns>Return the memory stream with CSV</returns>
+    /// <returns>Return the memory stream with CSV data of persons</returns>
     Task<MemoryStream> GetPersonCSV();
+
+    /// <summary>
+    /// Return persons as Excel file
+    /// </summary>
+    /// <returns>Returns the memory stream with Excel data of persons</returns>
+    Task<MemoryStream> GetPersonExcel();
 }

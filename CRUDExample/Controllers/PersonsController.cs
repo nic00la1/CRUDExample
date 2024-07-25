@@ -222,4 +222,12 @@ public class PersonsController : Controller
 
         return File(memoryStream, "application/octet-stream", "persons.csv");
     }
+
+    [Route("[action]")]
+    public async Task<IActionResult> PersonsExcel()
+    {
+        MemoryStream memoryStream = await _personService.GetPersonExcel();
+
+        return File(memoryStream, "application/octet-stream", "persons.xlsx");
+    }
 }

@@ -9,6 +9,7 @@ using System.Reflection;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using ServiceContracts.Enums;
 
 namespace Services;
@@ -232,6 +233,63 @@ public class PersonsService : IPersonService
         }
 
         memoryStream.Position = 0;
+        return memoryStream;
+    }
+
+    public async Task<MemoryStream> GetPersonExcel()
+    {
+        MemoryStream memoryStream = new();
+
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        ExcelPackage excelPackage = new(memoryStream);
+
+        ExcelWorksheet workSheet =
+            excelPackage.Workbook.Worksheets.Add("PersonsSheet");
+
+        workSheet.Cells["A1"].Value = nameof(PersonResponse.PersonName);
+        workSheet.Cells["B1"].Value = nameof(PersonResponse.Email);
+        workSheet.Cells["C1"].Value = nameof(PersonResponse.DateOfBirth);
+        workSheet.Cells["D1"].Value = nameof(PersonResponse.Age);
+        workSheet.Cells["E1"].Value = nameof(PersonResponse.Gender);
+        workSheet.Cells["F1"].Value = nameof(PersonResponse.Country);
+        workSheet.Cells["G1"].Value = nameof(PersonResponse.Address);
+        workSheet.Cells["H1"].Value = nameof(PersonResponse.ReceiveNewsLetters);
+
+        ExcelRange headerCells = workSheet.Cells["A1:H1"];
+        headerCells.Style.Font.Bold = true;
+        headerCells.Style.Fill.PatternType =
+            OfficeOpenXml.Style.ExcelFillStyle.Solid;
+        headerCells.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color
+            .LightGray);
+        headerCells.AutoFitColumns();
+
+        int row = 2;
+        List<PersonResponse> persons = _db.Persons.Include("Country")
+            .Select(p => p.ToPersonResponse()).ToList();
+
+        foreach (PersonResponse person in persons)
+        {
+            workSheet.Cells[row, 1].Value = person.PersonName;
+            workSheet.Cells[row, 2].Value = person.Email;
+            if (person.DateOfBirth.HasValue)
+                workSheet.Cells[row, 3].Value =
+                    person.DateOfBirth.Value.ToString("yyyy-MM-dd");
+            else
+                workSheet.Cells[row, 3].Value = string.Empty;
+            workSheet.Cells[row, 4].Value = person.Age;
+            workSheet.Cells[row, 5].Value = person.Gender;
+            workSheet.Cells[row, 6].Value = person.Country;
+            workSheet.Cells[row, 7].Value = person.Address;
+            workSheet.Cells[row, 8].Value = person.ReceiveNewsLetters;
+
+            row++;
+        }
+
+        workSheet.Cells[$"A1:H{row}"].AutoFitColumns();
+
+        await excelPackage.SaveAsync();
+
+        excelPackage.Stream.Position = 0;
         return memoryStream;
     }
 }
