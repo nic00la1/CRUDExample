@@ -40,10 +40,10 @@ public class PersonTestHelper
     {
         return new PersonAddRequest
         {
-            Name = name,
+            PersonName = name,
             Email = email,
             Address = address,
-            CountryID = countryId,
+            CountryId = countryId,
             DateOfBirth = dateOfBirth,
             Gender = gender,
             ReceiveNewsLetters = receiveNewsLetters

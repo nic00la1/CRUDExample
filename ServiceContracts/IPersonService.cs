@@ -45,7 +45,7 @@ public interface IPersonService
     /// Returns sorted list of persons
     /// </summary>
     /// <param name="allPersons">Represents lift of persons to sort</param>
-    /// <param name="sortBy">Name of the property (key), based on
+    /// <param name="sortBy">PersonName of the property (key), based on
     /// which the persons should be sorted</param>
     /// <param name="sortOrder">ASC or DESC</param>
     /// <returns>Returns sorted persons as PersonResponse list</returns>

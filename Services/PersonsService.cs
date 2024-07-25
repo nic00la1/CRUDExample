@@ -160,7 +160,7 @@ public class PersonsService : IPersonService
         matchingPerson.PersonName = personUpdateRequest.PersonName;
         matchingPerson.DateOfBirth = personUpdateRequest.DateOfBirth;
         matchingPerson.Email = personUpdateRequest.Email;
-        matchingPerson.CountryID = personUpdateRequest.CountryID;
+        matchingPerson.CountryId = personUpdateRequest.CountryID;
         matchingPerson.Gender = personUpdateRequest.Gender.ToString();
         matchingPerson.Address = personUpdateRequest.Address;
         matchingPerson.ReceiveNewsLetters =

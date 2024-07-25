@@ -48,7 +48,8 @@ public class PersonResponse
 
     public override string ToString()
     {
-        return $"Person Id: {ID}, Person Name: {PersonName}, Email: {Email}," +
+        return
+            $"Person Id: {ID}, Person PersonName: {PersonName}, Email: {Email}," +
             $"Date of Birth: {DateOfBirth?.ToString("dd MMM yyyy")}," +
             $"Gender: {Gender}, Country Id: {CountryId}, Address: {Address}," +
             $"Receive News Letters: {ReceiveNewsLetters}";
@@ -95,7 +96,7 @@ public static class PersonExtensions
             Address = person.Address,
             ReceiveNewsLetters = person.ReceiveNewsLetters,
             CountryId =
-                person.CountryID, // Assuming Person has a CountryId property
+                person.CountryId, // Assuming Person has a CountryId property
             Country = person.Country?.CountryName
         };
     }

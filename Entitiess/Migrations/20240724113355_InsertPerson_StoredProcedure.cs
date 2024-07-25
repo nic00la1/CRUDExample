@@ -13,12 +13,12 @@ namespace Entities.Migrations
             string sp_InsertPerson = @"CREATE PROCEDURE [dbo].[InsertPerson]
                 (@Id uniqueidentifier, @PersonName nvarchar(40), 
                  @Email nvarchar(40), @DateOfBirth datetime2(7), @Gender varchar(10), 
-                   @CountryID uniqueidentifier, @Address nvarchar(200), @ReceiveNewsLetters bit)
+                   @CountryId uniqueidentifier, @Address nvarchar(200), @ReceiveNewsLetters bit)
                 AS BEGIN
                    INSERT INTO [dbo].[Persons](Id, PersonName, Email, DateOfBirth,
-                    Gender, CountryID, Address, ReceiveNewsLetters) 
+                    Gender, CountryId, Address, ReceiveNewsLetters) 
 
-                   VALUES(@Id, @PersonName, @Email, @DateOfBirth, @Gender, @CountryID, @Address, @ReceiveNewsLetters)
+                   VALUES(@Id, @PersonName, @Email, @DateOfBirth, @Gender, @CountryId, @Address, @ReceiveNewsLetters)
                 END
                 ";
             migrationBuilder.Sql(sp_InsertPerson);

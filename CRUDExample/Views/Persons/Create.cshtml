@@ -8,14 +8,14 @@
 <div class="center-box">
 <form asp-controller="Persons" asp-action="Create" method="post">
         
-@*PersonName*@
+@*PersonPersonName*@
 <div class="form-field flex">
     <div class="w-25">
-        <label asp-for="Name" class="form-label pt">Person Name</label>
+        <label asp-for="PersonName" class="form-label pt">Person PersonName</label>
     </div>
     <div class="flex-1">
-        <input asp-for="Name" class="form-input"/>
-        <span asp-validation-for="Name" class="text-red"></span>
+        <input asp-for="PersonName" class="form-input"/>
+        <span asp-validation-for="PersonName" class="text-red"></span>
     </div>
 </div>
 @*Email*@
@@ -59,13 +59,13 @@
 @*Country*@
 <div class="form-field flex">
     <div class="w-25">
-        <label asp-for="CountryID" class="form-label">Country</label>
+        <label asp-for="CountryId" class="form-label">Country</label>
     </div>
     <div class="flex-1">
-        <select asp-for="CountryID" class="form-input" asp-items="@ViewBag.Countries">
+        <select asp-for="CountryId" class="form-input" asp-items="@ViewBag.Countries">
             <option value="">Please Select</option>
         </select>
-        <span asp-validation-for="CountryID" class="text-red"></span>
+        <span asp-validation-for="CountryId" class="text-red"></span>
     </div>
 </div>
 @*Address*@

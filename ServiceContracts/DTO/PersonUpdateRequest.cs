@@ -12,7 +12,7 @@ public class PersonUpdateRequest
     [Required(ErrorMessage = "Person ID can't be blank")]
     public Guid Id { get; set; }
 
-    [Required(ErrorMessage = "Person Name can't be blank")]
+    [Required(ErrorMessage = "Person PersonName can't be blank")]
     public string? PersonName { get; set; }
 
     [Required(ErrorMessage = "Email can't be blank")]
@@ -40,7 +40,7 @@ public class PersonUpdateRequest
             DateOfBirth = DateOfBirth,
             Gender = Gender.ToString(),
             Address = Address,
-            CountryID = CountryID,
+            CountryId = CountryID,
             ReceiveNewsLetters = ReceiveNewsLetters
         };
     }

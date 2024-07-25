@@ -17,7 +17,7 @@ namespace Entities.Migrations
                     @Email NVARCHAR(100),
                     @DateOfBirth DATETIME,
                     @Gender NVARCHAR(10),
-                    @CountryID UNIQUEIDENTIFIER,
+                    @CountryId UNIQUEIDENTIFIER,
                     @Address NVARCHAR(200),
                     @ReceiveNewsLetters BIT
                 AS
@@ -28,7 +28,7 @@ namespace Entities.Migrations
                         Email = @Email,
                         DateOfBirth = @DateOfBirth,
                         Gender = @Gender,
-                        CountryID = @CountryID,
+                        CountryId = @CountryId,
                         Address = @Address,
                         ReceiveNewsLetters = @ReceiveNewsLetters
                     WHERE Id = @Id;

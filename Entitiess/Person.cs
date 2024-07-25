@@ -24,7 +24,7 @@ public class Person
     [StringLength(10)] public string? Gender { get; set; }
 
     // unique identifier
-    public Guid? CountryID { get; set; }
+    public Guid? CountryId { get; set; }
 
     [StringLength(200)] public string? Address { get; set; }
     public bool ReceiveNewsLetters { get; set; }

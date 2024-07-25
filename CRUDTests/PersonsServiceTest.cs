@@ -59,7 +59,7 @@ public class PersonsServiceTest
         // Arrange
         PersonAddRequest? personAddRequest = new()
         {
-            Name = null
+            PersonName = null
         };
 
         // Act
@@ -363,8 +363,8 @@ public class PersonsServiceTest
 
         PersonAddRequest personAddRequest = new()
         {
-            Name = "John",
-            CountryID = countryResponseFromAdd.CountryId,
+            PersonName = "John",
+            CountryId = countryResponseFromAdd.CountryId,
             Address = "Abc road",
             Gender = GenderOptions.Male,
             Email = "john@example.com"
@@ -403,8 +403,8 @@ public class PersonsServiceTest
 
         PersonAddRequest personAddRequest = new()
         {
-            Name = "John",
-            CountryID = countryResponseFromAdd.CountryId,
+            PersonName = "John",
+            CountryId = countryResponseFromAdd.CountryId,
             Address = "Abc road",
             DateOfBirth = DateTime.Parse("2000-01-01"),
             Email = "abc@example.com",
@@ -452,8 +452,8 @@ public class PersonsServiceTest
 
         PersonAddRequest personAddRequest = new()
         {
-            Name = "Jones",
-            CountryID = countryResponseFromAdd.CountryId,
+            PersonName = "Jones",
+            CountryId = countryResponseFromAdd.CountryId,
             Address = "address",
             DateOfBirth = DateTime.Parse("2010-01-01"),
             Email = "abc@example.pl",

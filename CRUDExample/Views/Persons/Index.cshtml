@@ -25,7 +25,7 @@
                     <option value="@field.Key">@field.Value</option>
                 }
             }
-            @* Eg: searchBy=PersonName&searchString=abc*@
+            @* Eg: searchBy=PersonPersonName&searchString=abc*@
         </select>
     </div>
     
@@ -45,7 +45,7 @@
         @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData)
             {
                 {"ColumnName", nameof(PersonResponse.PersonName)},
-                {"ColumnDisplayName", "Person Name"},
+                {"ColumnDisplayName", "Person PersonName"},
             })
         @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData)
         {

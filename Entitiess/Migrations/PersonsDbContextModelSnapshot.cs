@@ -73,7 +73,7 @@ namespace Entities.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid?>("CountryID")
+                    b.Property<Guid?>("CountryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DateOfBirth")

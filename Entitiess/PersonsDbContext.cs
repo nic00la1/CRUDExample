@@ -24,24 +24,25 @@ public class PersonsDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Country>().ToTable("Countries");
-        modelBuilder.Entity<Person>().ToTable("Persons");
+        modelBuilder.Entity<Person>().ToTable("Persons",
+            t =>
+            {
+                t.HasCheckConstraint("CHK_TIN",
+                    "len([TaxIdentificationNumber]) = 8");
+            });
 
         // Seed data to countries table
         string countriesJson = File.ReadAllText("countries.json");
-
         List<Country> countries =
             JsonSerializer.Deserialize<List<Country>>(countriesJson)!;
-
         if (countries != null)
             foreach (Country country in countries)
                 modelBuilder.Entity<Country>().HasData(country);
 
         // Seed data to persons table
         string personsJson = File.ReadAllText("persons.json");
-
         List<Person> persons =
             JsonSerializer.Deserialize<List<Person>>(personsJson)!;
-
         if (persons != null)
             foreach (Person person in persons)
                 modelBuilder.Entity<Person>().HasData(person);
@@ -51,17 +52,11 @@ public class PersonsDbContext : DbContext
             .Property(temp => temp.TIN).HasColumnName("TaxIdentificationNumber")
             .HasColumnType("varchar(8)").HasDefaultValue("ABC12345");
 
-//        modelBuilder.Entity<Person>().HasIndex(temp => temp.TIN).IsUnique();
-
-        modelBuilder.Entity<Person>()
-            .HasCheckConstraint("CHK_TIN",
-                "len([TaxIdentificationNumber]]) = 8");
-
         // Table Relationship
         /*modelBuilder.Entity<Person>(entity =>
         {
             entity.HasOne<Country>(c => c.Country).WithMany(p => p.Persons)
-                .HasForeignKey(p => p.CountryID);
+                .HasForeignKey(p => p.CountryId);
         });
         */
     }
@@ -80,14 +75,14 @@ public class PersonsDbContext : DbContext
             new("@Email", person.Email),
             new("@DateOfBirth", person.DateOfBirth),
             new("@Gender", person.Gender),
-            new("@CountryID", person.CountryID),
+            new("@CountryId", person.CountryId),
             new("@Address", person.Address),
             new("@ReceiveNewsLetters", person.ReceiveNewsLetters)
         };
 
-        return Database.ExecuteSqlRaw("EXECUTE [dbo].[InsertPerson]" +
-            "@Id, @PersonName, @Email, @DateOfBirth, @Gender," +
-            "@CountryID, @Address, @ReceiveNewsLetters", parameters);
+        return Database.ExecuteSqlRaw(
+            "EXECUTE [dbo].[InsertPerson] @Id, @PersonName, @Email, @DateOfBirth, @Gender, @CountryId, @Address, @ReceiveNewsLetters",
+            parameters);
     }
 
     public async Task<int> sp_DeletePersonAsync(Guid Id)
@@ -106,13 +101,13 @@ public class PersonsDbContext : DbContext
             new("@Email", person.Email),
             new("@DateOfBirth", person.DateOfBirth),
             new("@Gender", person.Gender),
-            new("@CountryID", person.CountryID),
+            new("@CountryId", person.CountryId),
             new("@Address", person.Address),
             new("@ReceiveNewsLetters", person.ReceiveNewsLetters)
         };
 
         return await Database.ExecuteSqlRawAsync(
-            "EXEC UpdatePerson @Id, @PersonName, @Email, @DateOfBirth, @Gender, @CountryID, @Address, @ReceiveNewsLetters",
+            "EXEC UpdatePerson @Id, @PersonName, @Email, @DateOfBirth, @Gender, @CountryId, @Address, @ReceiveNewsLetters",
             parameters);
     }
 }

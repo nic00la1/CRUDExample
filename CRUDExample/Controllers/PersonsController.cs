@@ -36,7 +36,7 @@ public class PersonsController : Controller
         // Search
         ViewBag.SearchFields = new Dictionary<string, string>()
         {
-            { nameof(PersonResponse.PersonName), "Person Name" },
+            { nameof(PersonResponse.PersonName), "Person PersonName" },
             { nameof(PersonResponse.Email), "Email" },
             { nameof(PersonResponse.DateOfBirth), "Date of Birth" },
             { nameof(PersonResponse.Gender), "Gender" },
@@ -197,7 +197,8 @@ public class PersonsController : Controller
 
         if (personResponse == null) return RedirectToAction("Index");
 
-        _personService.DeletePerson(personUpdateRequest.Id);
+        await _personService.DeletePerson(personUpdateRequest
+            .Id); // Added await here
         return RedirectToAction("Index");
     }
 

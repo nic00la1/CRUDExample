@@ -9,8 +9,8 @@ namespace ServiceContracts.DTO;
 /// </summary>
 public class PersonAddRequest
 {
-    [Required(ErrorMessage = "Person Name can't be blank")]
-    public string? Name { get; set; }
+    [Required(ErrorMessage = "Person PersonName can't be blank")]
+    public string? PersonName { get; set; }
 
     [Required(ErrorMessage = "Email can't be blank")]
     [EmailAddress(ErrorMessage = "Email value should be a valid email")]
@@ -23,7 +23,7 @@ public class PersonAddRequest
     public GenderOptions? Gender { get; set; }
 
     [Required(ErrorMessage = "Please select a country")]
-    public Guid? CountryID { get; set; }
+    public Guid? CountryId { get; set; }
 
     public string? Address { get; set; }
 
@@ -37,12 +37,12 @@ public class PersonAddRequest
     {
         return new Person()
         {
-            PersonName = Name,
+            PersonName = PersonName,
             Email = Email,
             DateOfBirth = DateOfBirth,
             Gender = Gender.ToString(),
             Address = Address,
-            CountryID = CountryID,
+            CountryId = CountryId,
             ReceiveNewsLetters = ReceiveNewsLetters
         };
     }
