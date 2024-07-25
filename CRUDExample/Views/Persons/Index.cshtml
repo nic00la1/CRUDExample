@@ -4,7 +4,13 @@
 }
 <form asp-controller="Persons" asp-action="Index" method="get">
     <h1>Persons</h1>
-    
+    <nav class="nicola-nav">
+        <a class="nav-link" asp-controller="Persons" asp-action="Create">Create new person</a>
+        <a class="nav-link" asp-controller="Persons" asp-action="PersonsPDF">Export to PDF</a>
+        <a class="nav-link" asp-controller="Persons" asp-action="PersonsCSV">Export to CSV</a>
+        <a class="nav-link" asp-controller="Persons" asp-action="PersonsEXCEL">Export to EXCEL</a>
+    </nav>
+
     <div class="box flex">
     <div class="flex-1">
         <select class="form-input" name="searchBy">
