@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Entities;
 using Microsoft.VisualBasic;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services.Helpers;
 using System.Reflection;
+using CsvHelper;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts.Enums;
 
@@ -180,5 +182,26 @@ public class PersonsService : IPersonService
         int result = await _db.sp_DeletePersonAsync(personId.Value);
 
         return result > 0;
+    }
+
+    public async Task<MemoryStream> GetPersonCSV()
+    {
+        MemoryStream memoryStream = new();
+        StreamWriter streamWriter = new(memoryStream);
+        CsvWriter csvWriter =
+            new(streamWriter, CultureInfo.InvariantCulture, true);
+
+        csvWriter.WriteHeader<PersonResponse>(); // Id, PersonName, ...
+        csvWriter.NextRecord();
+
+        List<PersonResponse> persons = _db.Persons.Include("Country")
+            .Select(p => p.ToPersonResponse()).ToList();
+
+        csvWriter.WriteRecordsAsync(persons);
+        // 1, "John Doe", ...
+
+        memoryStream.Position = 0;
+
+        return memoryStream;
     }
 }
