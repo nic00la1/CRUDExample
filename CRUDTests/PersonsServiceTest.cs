@@ -8,6 +8,7 @@ using ServiceContracts.Enums;
 using Services;
 using Xunit.Abstractions;
 using AutoFixture;
+using FluentAssertions;
 
 namespace CRUDTests;
 
@@ -56,10 +57,13 @@ public class PersonsServiceTest
         PersonAddRequest? personAddRequest = null;
 
         // Act
-        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        Func<Task> action = async () =>
         {
             await _personService.AddPerson(personAddRequest);
-        });
+        };
+
+        // Assert
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     // When we supply null value as PersonName,
@@ -71,11 +75,13 @@ public class PersonsServiceTest
         PersonAddRequest? personAddRequest = _fixture.Build<PersonAddRequest>()
             .With(temp => temp.PersonName, null as string).Create();
 
-        // Act
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        // Assert
+        Func<Task> action = async () =>
         {
             await _personService.AddPerson(personAddRequest);
-        });
+        };
+
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     // When we supply proper person details,
@@ -94,9 +100,10 @@ public class PersonsServiceTest
             await _personService.AddPerson(personAddRequest);
         List<PersonResponse> personList = await _personService.GetAllPersons();
 
-        // Assert
-        Assert.True(personResponseFromAdd.ID != Guid.Empty);
-        Assert.Contains(personResponseFromAdd, personList);
+        // Fluent Assertion
+        personResponseFromAdd.ID.Should().NotBe(Guid.Empty);
+
+        personList.Should().Contain(personResponseFromAdd);
     }
 
     #endregion
@@ -115,8 +122,8 @@ public class PersonsServiceTest
         PersonResponse? personResponseFromGet = await
             _personService.GetPersonById(personId);
 
-        // Assert
-        Assert.Null(personResponseFromGet);
+        // Fluent Assertion
+        personResponseFromGet.Should().BeNull();
     }
 
     // If we supply a valid PersonID,
@@ -141,8 +148,8 @@ public class PersonsServiceTest
         PersonResponse? personResponseFromGet = await
             _personService.GetPersonById(personResponseFromAdd.ID);
 
-        // Assert
-        Assert.Equal(personResponseFromAdd, personResponseFromGet);
+        // Fluent Assertion
+        personResponseFromGet.Should().Be(personResponseFromAdd);
     }
 
     #endregion
@@ -158,8 +165,8 @@ public class PersonsServiceTest
         List<PersonResponse> personFromGet = await
             _personService.GetAllPersons();
 
-        //Assert
-        Assert.Empty(personFromGet);
+        // Fluent Assertion
+        personFromGet.Should().BeEmpty();
     }
 
     // First, we will add few persons; and then we call
@@ -217,11 +224,9 @@ public class PersonsServiceTest
         // Log actual responses
         _personTestHelper.LogPersonResponses("Actual: ", personsListFromGet);
 
-        // Assert
-        // Ensure that each person added is present in the list returned by GetAllPersons
-        foreach (PersonResponse personResponseFromAdd in
-                 personResponseListFromAdd)
-            Assert.Contains(personResponseFromAdd, personsListFromGet);
+        // Fluent Assertion
+        personsListFromGet.Should()
+            .BeEquivalentTo(personResponseListFromAdd);
     }
 
     #endregion
