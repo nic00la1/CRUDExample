@@ -7,6 +7,7 @@ using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
 using Xunit.Abstractions;
+using AutoFixture;
 
 namespace CRUDTests;
 
@@ -17,9 +18,11 @@ public class PersonsServiceTest
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly PersonTestHelper _personTestHelper;
     private readonly ApplicationDbContext _dbContext;
+    private readonly IFixture _fixture;
 
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
+        _fixture = new Fixture();
         List<Country> countriesInitialData = new() { };
         List<Person> personsInitialData = new() { };
 
@@ -85,27 +88,13 @@ public class PersonsServiceTest
     public async Task AddPerson_ProperPersonDetails()
     {
         // Arrange
-        CountryResponse countryResponse = await
-            _countriesService.AddCountry(new CountryAddRequest
-                { CountryName = "TestCountry" });
-        PersonAddRequest personAddRequest =
-            _personTestHelper.CreatePersonAddRequest(
-                "Nicola Kaleta",
-                "nicola.kaleta@test.com",
-                "sample address",
-                countryResponse.CountryId,
-                DateTime.Parse("2006-08-16"),
-                GenderOptions.Female,
-                true
-            );
-
+        PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "someone@example.com").Create();
 
         // Act
         PersonResponse personResponseFromAdd =
-            await _personTestHelper
-                .AddPersonAndReturnResponse(personAddRequest);
+            await _personService.AddPerson(personAddRequest);
         List<PersonResponse> personList = await _personService.GetAllPersons();
-
 
         // Assert
         Assert.True(personResponseFromAdd.ID != Guid.Empty);
