@@ -4,25 +4,28 @@ using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
+using EntityFrameworkCoreMock;
+using Moq;
 
 namespace CRUDTests;
 
 public class CountriesServiceTest
 {
     private readonly ICountriesService _countriesService;
-    private readonly PersonsDbContext _dbContext;
 
+    // constructor
     public CountriesServiceTest()
     {
-        // Create an in-memory database context for testing
-        DbContextOptions<PersonsDbContext> options =
-            new DbContextOptionsBuilder<PersonsDbContext>()
-                .UseInMemoryDatabase("TestDatabase")
-                .Options;
+        List<Country> countriesInitialData = new() { };
 
-        _dbContext = new PersonsDbContext(options);
+        DbContextMock<ApplicationDbContext> dbContextMock =
+            new(new DbContextOptionsBuilder<ApplicationDbContext>().Options);
 
-        _countriesService = new CountriesService(_dbContext);
+        ApplicationDbContext dbContext = dbContextMock.Object;
+        dbContextMock.CreateDbSetMock(temp => temp.Countries,
+            countriesInitialData);
+
+        _countriesService = new CountriesService(dbContext);
     }
 
     #region AddCountry

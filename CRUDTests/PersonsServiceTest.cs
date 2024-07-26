@@ -1,5 +1,6 @@
 ﻿using CRUDTests.Helpers;
 using Entities;
+using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -15,21 +16,28 @@ public class PersonsServiceTest
     private readonly ICountriesService _countriesService;
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly PersonTestHelper _personTestHelper;
-    private readonly PersonsDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext;
 
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
-        // Create an in-memory database context for testing
-        DbContextOptions<PersonsDbContext> options =
-            new DbContextOptionsBuilder<PersonsDbContext>()
-                .UseInMemoryDatabase("TestDatabase")
-                .Options;
+        List<Country> countriesInitialData = new() { };
+        List<Person> personsInitialData = new() { };
 
-        _dbContext = new PersonsDbContext(options);
+        DbContextMock<ApplicationDbContext> dbContextMock =
+            new(new DbContextOptionsBuilder<ApplicationDbContext>().Options);
 
-        _countriesService = new CountriesService(_dbContext);
-        _personService = new PersonsService(_dbContext, _countriesService);
+        ApplicationDbContext dbContext = dbContextMock.Object;
+        dbContextMock.CreateDbSetMock(temp => temp.Countries,
+            countriesInitialData);
+        dbContextMock.CreateDbSetMock(temp => temp.Persons,
+            personsInitialData);
+
+        _countriesService = new CountriesService(dbContext);
+
+        _personService = new PersonsService(dbContext, _countriesService);
+
         _testOutputHelper = testOutputHelper;
+
         _personTestHelper = new PersonTestHelper(_personService,
             _countriesService, testOutputHelper);
     }

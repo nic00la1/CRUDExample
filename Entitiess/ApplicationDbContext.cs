@@ -9,15 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Entities;
 
-public class PersonsDbContext : DbContext
+public class ApplicationDbContext : DbContext
 {
-    public PersonsDbContext(DbContextOptions<PersonsDbContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }
 
-    public DbSet<Country> Countries { get; set; }
-    public DbSet<Person> Persons { get; set; }
+    public virtual DbSet<Country> Countries { get; set; }
+    public virtual DbSet<Person> Persons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
