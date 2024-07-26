@@ -166,24 +166,24 @@ public class PersonsService : IPersonService
         matchingPerson.ReceiveNewsLetters =
             personUpdateRequest.ReceiveNewsLetters;
 
-        // Call the stored procedure to update the person
-        _db.UpdatePersonAsync(matchingPerson).GetAwaiter().GetResult();
+        // Save changes to the database
+        _db.Persons.Update(matchingPerson);
+        await _db.SaveChangesAsync();
 
         return matchingPerson.ToPersonResponse();
     }
 
     public async Task<bool> DeletePerson(Guid? personId)
     {
-        return sp_DeletePersonAsync(personId).GetAwaiter().GetResult();
-    }
-
-    public async Task<bool> sp_DeletePersonAsync(Guid? personId)
-    {
         if (personId == null) throw new ArgumentNullException(nameof(personId));
 
-        int result = await _db.sp_DeletePersonAsync(personId.Value);
+        Person? person = await _db.Persons.FindAsync(personId.Value);
+        if (person == null) return false;
 
-        return result > 0;
+        _db.Persons.Remove(person);
+        await _db.SaveChangesAsync();
+
+        return true;
     }
 
     public async Task<MemoryStream> GetPersonCSV()
