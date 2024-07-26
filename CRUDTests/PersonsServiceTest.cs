@@ -460,12 +460,14 @@ public class PersonsServiceTest
         // Arrange
         PersonUpdateRequest? personUpdateRequest = null;
 
-        // Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        Func<Task> action = async () =>
         {
             // Act
             await _personService.UpdatePerson(personUpdateRequest);
-        });
+        };
+
+        // Fluent Assertion
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     // When we supply invalid person ID,
@@ -478,12 +480,14 @@ public class PersonsServiceTest
         PersonUpdateRequest? personUpdateRequest =
             _fixture.Build<PersonUpdateRequest>().Create();
 
-        // Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        Func<Task> action = async () =>
         {
             // Act
             await _personService.UpdatePerson(personUpdateRequest);
-        });
+        };
+
+        // Fluent Assertion
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     // When PersonName is null
@@ -512,12 +516,14 @@ public class PersonsServiceTest
 
         personUpdateRequest.PersonName = null;
 
-        // Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        Func<Task> action = async () =>
         {
             // Act
             await _personService.UpdatePerson(personUpdateRequest);
-        });
+        };
+
+        // Fluent Assertion
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     // First, add a new person; then try to update the 
@@ -555,8 +561,8 @@ public class PersonsServiceTest
         PersonResponse personResponseFromGet = await
             _personService.GetPersonById(personResponseFromAdd.ID);
 
-        // Assert
-        Assert.Equal(personResponseFromGet, personResponseFromUpdate);
+        // Fluent Assertion
+        personResponseFromUpdate.Should().Be(personResponseFromGet);
     }
 
     #endregion
@@ -586,8 +592,8 @@ public class PersonsServiceTest
         bool isDeleted =
             await _personService.DeletePerson(personResponseFromAdd.ID);
 
-        // Assert
-        Assert.True(isDeleted);
+        // Fluent Assertion
+        isDeleted.Should().BeTrue();
     }
 
     // If you supply an invalid PersonId, it should return false
@@ -597,8 +603,8 @@ public class PersonsServiceTest
         // Act
         bool isDeleted = await _personService.DeletePerson(Guid.NewGuid());
 
-        // Assert
-        Assert.False(isDeleted);
+        // Fluent Assertion
+        isDeleted.Should().BeFalse();
     }
 
     #endregion
