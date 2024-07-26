@@ -26,7 +26,7 @@ public class CountriesServiceTest
         dbContextMock.CreateDbSetMock(temp => temp.Countries,
             countriesInitialData);
 
-        _countriesService = new CountriesService(dbContext);
+        _countriesService = new CountriesService(null);
     }
 
     #region AddCountry

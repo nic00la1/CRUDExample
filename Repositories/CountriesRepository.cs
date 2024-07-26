@@ -13,7 +13,7 @@ public class CountriesRepository : ICountriesRepository
         _db = db;
     }
 
-    public async Task<Country> AddPerson(Country country)
+    public async Task<Country> AddCountry(Country country)
     {
         _db.Countries.Add(country);
         await _db.SaveChangesAsync();

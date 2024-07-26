@@ -12,7 +12,7 @@ public interface ICountriesRepository
     /// </summary>
     /// <param name="country">Country object to add</param>
     /// <returns>Returns the country object after adding it to the data store</returns>
-    Task<Country> AddPerson(Country country);
+    Task<Country> AddCountry(Country country);
 
     /// <summary>
     /// Returns a list of all countries in the data store.
