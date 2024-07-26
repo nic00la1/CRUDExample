@@ -5,6 +5,7 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
 using EntityFrameworkCoreMock;
+using FluentAssertions;
 using Moq;
 
 namespace CRUDTests;
@@ -38,12 +39,14 @@ public class CountriesServiceTest
         // Arrange
         CountryAddRequest? request = null;
 
-        // Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        // Act
+        Func<Task> action = async () =>
         {
-            // Act
             await _countriesService.AddCountry(request);
-        });
+        };
+
+        // Fluent Assertion
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     // When the CountryName is null,
@@ -57,12 +60,14 @@ public class CountriesServiceTest
             CountryName = null
         };
 
-        // Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        // Act
+        Func<Task> action = async () =>
         {
-            // Act
             await _countriesService.AddCountry(request);
-        });
+        };
+
+        // Fluent Assertion
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     // When the CountryName is duplicated,
@@ -80,13 +85,14 @@ public class CountriesServiceTest
             CountryName = "USA"
         };
 
-        // Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        // Act
+        Func<Task> action = async () =>
         {
-            // Act
             await _countriesService.AddCountry(request1);
             await _countriesService.AddCountry(request2);
-        });
+        };
+        // Fluent Assertion
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     // When you supply proper CountryName,
@@ -107,9 +113,9 @@ public class CountriesServiceTest
         List<CountryResponse> countries_from_GetAllCountries = await
             _countriesService.GetAllCountries();
 
-        // Assert
-        Assert.True(response.CountryId != Guid.Empty);
-        Assert.Contains(response, countries_from_GetAllCountries);
+        // Fluent Assertion
+        response.CountryId.Should().NotBe(Guid.Empty);
+        countries_from_GetAllCountries.Should().Contain(response);
     }
 
     #endregion
@@ -125,8 +131,8 @@ public class CountriesServiceTest
         List<CountryResponse> actual_country_response_list = await
             _countriesService.GetAllCountries();
 
-        // Assert
-        Assert.Empty(actual_country_response_list);
+        // Fluent Assertion
+        actual_country_response_list.Should().BeEmpty();
     }
 
     // 
@@ -153,8 +159,8 @@ public class CountriesServiceTest
         // Read each element from the list
         foreach (CountryResponse expected_country in
                  countries_list_from_add_country)
-            // Assert
-            Assert.Contains(expected_country, actualCountryResponseList);
+            // Fluent Assertion
+            actualCountryResponseList.Should().Contain(expected_country);
     }
 
     #endregion
@@ -172,8 +178,8 @@ public class CountriesServiceTest
         CountryResponse? country_response_from_get_method = await
             _countriesService.GetCountryByCountryId(countryId);
 
-        // Assert
-        Assert.Null(country_response_from_get_method);
+        // Fluent Assertion
+        country_response_from_get_method.Should().BeNull();
     }
 
     // If we supply a valid CountryId, it should return the matching 
@@ -195,8 +201,8 @@ public class CountriesServiceTest
             _countriesService.GetCountryByCountryId(country_response_from_add
                 .CountryId);
 
-        // Assert
-        Assert.Equal(country_response_from_add, country_response_from_get);
+        // Fluent Assertion
+        country_response_from_get.Should().Be(country_response_from_add);
     }
 
     #endregion
