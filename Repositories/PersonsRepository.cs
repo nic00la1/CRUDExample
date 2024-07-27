@@ -14,7 +14,7 @@ public class PersonsRepository : IPersonsRepository
 {
     private readonly ApplicationDbContext _db;
 
-    private PersonsRepository(ApplicationDbContext db)
+    public PersonsRepository(ApplicationDbContext db)
     {
         _db = db;
     }
