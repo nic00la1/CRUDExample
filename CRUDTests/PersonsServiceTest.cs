@@ -23,7 +23,6 @@ public class PersonsServiceTest
     private readonly Mock<IPersonsRepository> _personsRepositoryMock;
     private readonly IPersonsRepository _personsRepository;
 
-    private readonly ITestOutputHelper _testOutputHelper;
     private readonly PersonTestHelper _personTestHelper;
     private readonly ApplicationDbContext _dbContext;
     private readonly IFixture _fixture;
@@ -34,25 +33,7 @@ public class PersonsServiceTest
         _personsRepositoryMock = new Mock<IPersonsRepository>();
         _personsRepository = _personsRepositoryMock.Object;
 
-        List<Country> countriesInitialData = new() { };
-        List<Person> personsInitialData = new() { };
-
-        DbContextMock<ApplicationDbContext> dbContextMock =
-            new(new DbContextOptionsBuilder<ApplicationDbContext>().Options);
-
-        ApplicationDbContext dbContext = dbContextMock.Object;
-        dbContextMock.CreateDbSetMock(temp => temp.Countries,
-            countriesInitialData);
-        dbContextMock.CreateDbSetMock(temp => temp.Persons,
-            personsInitialData);
-
-        Mock<ICountriesRepository> countriesRepositoryMock = new();
-        _countriesService =
-            new CountriesService(countriesRepositoryMock.Object);
-
         _personService = new PersonsService(_personsRepository);
-
-        _testOutputHelper = testOutputHelper;
 
         _personTestHelper = new PersonTestHelper(_personService,
             _countriesService, testOutputHelper);
