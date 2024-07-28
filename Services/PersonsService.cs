@@ -55,16 +55,10 @@ public class PersonsService : IPersonService
     public async Task<List<PersonResponse>> GetAllPersons()
     {
         // SELECT * FROM Persons
-        List<Person> persons =
-            await _personsRepository.GetAllPersons();
+        List<Person> persons = await _personsRepository.GetAllPersons() ??
+            new List<Person>();
 
-        return persons
-            .Select(p => p.ToPersonResponse()).ToList();
-
-
-/*        return _personsRepository.sp_GetAllPersons()
-            .Select(temp => ConvertPersonToPersonResponse(temp)).ToList();
-*/
+        return persons.Select(p => p.ToPersonResponse()).ToList();
     }
 
     public async Task<PersonResponse?> GetPersonById(Guid? personId)
