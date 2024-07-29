@@ -15,22 +15,32 @@ builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonService, PersonsService>();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-// Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
-
+// Conditionally register the DbContext based on the environment
+if (builder.Environment.IsEnvironment("Test"))
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    {
+        options.UseInMemoryDatabase("TestDatabase");
+    });
+else
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    {
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
 WebApplication app = builder.Build();
 
 if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 
-Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", "Rotativa");
+if (builder.Environment.IsEnvironment("Test") == false)
+    Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", "Rotativa");
+
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{
+} // make the auto-generated Program accessible programmatically
