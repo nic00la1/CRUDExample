@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using CRUDExample.Controllers;
+using Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -15,6 +16,7 @@ public class PersonsControllerTest
     private readonly ICountriesService _countriesService;
 
     private readonly Mock<IPersonService> _personsServiceMock;
+    private readonly Mock<ICountriesService> _countriesServiceMock;
 
     private readonly Fixture _fixture;
 
@@ -23,10 +25,10 @@ public class PersonsControllerTest
         _fixture = new Fixture();
 
         _personsServiceMock = new Mock<IPersonService>();
-        Mock<ICountriesService> countriesServiceMock = new();
+        _countriesServiceMock = new Mock<ICountriesService>();
 
         _personsService = _personsServiceMock.Object;
-        _countriesService = countriesServiceMock.Object;
+        _countriesService = _countriesServiceMock.Object;
     }
 
     #region Index
@@ -64,6 +66,82 @@ public class PersonsControllerTest
             .BeAssignableTo<IEnumerable<PersonResponse>>();
 
         viewResult.ViewData.Model.Should().BeEquivalentTo(personsResponseList);
+    }
+
+    #endregion
+
+    #region Create
+
+    [Fact]
+    public async Task Create_IfModelErrors_ToReturnCreateView()
+    {
+        // Arrange
+        PersonAddRequest personAddRequest =
+            _fixture.Create<PersonAddRequest>();
+
+        PersonResponse personResponse =
+            _fixture.Create<PersonResponse>();
+
+        List<CountryResponse> countries =
+            _fixture.Create<List<CountryResponse>>();
+
+        _countriesServiceMock.Setup(temp => temp.GetAllCountries())
+            .ReturnsAsync(countries);
+
+        _personsServiceMock.Setup(temp =>
+                temp.AddPerson(It.IsAny<PersonAddRequest>()))
+            .ReturnsAsync(personResponse);
+
+        PersonsController personsController = new(
+            _personsService, _countriesService);
+
+        // Act 
+        personsController.ModelState.AddModelError("PersonName",
+            "Person Name can't be blank!");
+
+        IActionResult result = await personsController.Create(personAddRequest);
+
+        // Assert
+        ViewResult viewResult = Assert.IsType<ViewResult>(result);
+
+        viewResult.ViewData.Model.Should()
+            .BeAssignableTo<PersonAddRequest>();
+
+        viewResult.ViewData.Model.Should().Be(personAddRequest);
+    }
+
+    [Fact]
+    public async Task Create_IfNoModelErrors_ToReturnRedirectToIndex()
+    {
+        // Arrange
+        PersonAddRequest personAddRequest =
+            _fixture.Create<PersonAddRequest>();
+
+        PersonResponse personResponse =
+            _fixture.Create<PersonResponse>();
+
+        List<CountryResponse> countries =
+            _fixture.Create<List<CountryResponse>>();
+
+        _countriesServiceMock.Setup(temp => temp.GetAllCountries())
+            .ReturnsAsync(countries);
+
+        _personsServiceMock.Setup(temp =>
+                temp.AddPerson(It.IsAny<PersonAddRequest>()))
+            .ReturnsAsync(personResponse);
+
+        PersonsController personsController = new(
+            _personsService, _countriesService);
+
+        // Act 
+        IActionResult result = await personsController.Create(personAddRequest);
+
+        // Assert
+        RedirectToActionResult redirectResult =
+            Assert.IsType<RedirectToActionResult>(result);
+
+        redirectResult.ActionName.Should()
+            .Be("Index");
     }
 
     #endregion
