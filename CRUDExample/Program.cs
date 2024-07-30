@@ -24,6 +24,17 @@ builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonService, PersonsService>();
 
+
+// Add HTTP logging services
+builder.Services.AddHttpLogging(logging =>
+{
+    // Configure logging options if needed
+    logging.LoggingFields =
+        Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
+    logging.RequestBodyLogLimit = 4096;
+    logging.ResponseBodyLogLimit = 4096;
+});
+
 // Conditionally register the DbContext based on the environment
 if (builder.Environment.IsEnvironment("Test"))
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -40,6 +51,8 @@ WebApplication app = builder.Build();
 
 if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
+
+app.UseHttpLogging();
 
 //app.Logger.LogDebug("debug-message");
 //app.Logger.LogInformation("info-message");
