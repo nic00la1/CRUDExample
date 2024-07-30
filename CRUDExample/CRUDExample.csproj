@@ -35,4 +35,8 @@
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.0-preview.6.24327.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+
 </Project>
