@@ -9,6 +9,7 @@ using System.Reflection;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using RepositoryContracts;
 using ServiceContracts.Enums;
@@ -19,13 +20,16 @@ public class PersonsService : IPersonService
 {
     private readonly IPersonsRepository _personsRepository;
     private readonly PersonsServiceHelper _personsServiceHelper;
+    private readonly ILogger<PersonsService> _logger;
 
     public PersonsService(
-        IPersonsRepository personsRepository
+        IPersonsRepository personsRepository,
+        ILogger<PersonsService> logger
     )
     {
         _personsRepository = personsRepository;
         _personsServiceHelper = new PersonsServiceHelper();
+        _logger = logger;
     }
 
     public async Task<PersonResponse> AddPerson(
@@ -54,6 +58,8 @@ public class PersonsService : IPersonService
 
     public async Task<List<PersonResponse>> GetAllPersons()
     {
+        _logger.LogInformation("GetAllPersons of PersonsService");
+
         // SELECT * FROM Persons
         List<Person> persons = await _personsRepository.GetAllPersons() ??
             new List<Person>();
@@ -78,6 +84,8 @@ public class PersonsService : IPersonService
         string? searchString
     )
     {
+        _logger.LogInformation("GetFilteredPersons of PersonsService");
+
         List<PersonResponse> allPersons = await GetAllPersons();
         if (string.IsNullOrEmpty(searchBy) ||
             string.IsNullOrEmpty(searchString)) return allPersons;
@@ -122,6 +130,8 @@ public class PersonsService : IPersonService
         SortOderOptions sortOrder
     )
     {
+        _logger.LogInformation("GetSortedPersons of PersonsService");
+
         if (string.IsNullOrEmpty(sortBy)) return allPersons;
 
         // Use the SortByProperty method from PersonsServiceHelper
