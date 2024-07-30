@@ -1,4 +1,5 @@
 using Entities;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using Services;
@@ -26,13 +27,12 @@ builder.Services.AddScoped<IPersonService, PersonsService>();
 
 
 // Add HTTP logging services
-builder.Services.AddHttpLogging(logging =>
+builder.Services.AddHttpLogging(options =>
 {
     // Configure logging options if needed
-    logging.LoggingFields =
-        Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.All;
-    logging.RequestBodyLogLimit = 4096;
-    logging.ResponseBodyLogLimit = 4096;
+    options.LoggingFields =
+        HttpLoggingFields.RequestProperties |
+        HttpLoggingFields.ResponsePropertiesAndHeaders;
 });
 
 // Conditionally register the DbContext based on the environment
