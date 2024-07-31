@@ -8,10 +8,12 @@ using Services.Helpers;
 using System.Reflection;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using RepositoryContracts;
+using Serilog;
 using ServiceContracts.Enums;
 
 namespace Services;
@@ -21,15 +23,18 @@ public class PersonsService : IPersonService
     private readonly IPersonsRepository _personsRepository;
     private readonly PersonsServiceHelper _personsServiceHelper;
     private readonly ILogger<PersonsService> _logger;
+    private readonly IDiagnosticContext _diagnosticContext;
 
     public PersonsService(
         IPersonsRepository personsRepository,
-        ILogger<PersonsService> logger
+        ILogger<PersonsService> logger,
+        IDiagnosticContext diagnosticContext
     )
     {
         _personsRepository = personsRepository;
         _personsServiceHelper = new PersonsServiceHelper();
         _logger = logger;
+        _diagnosticContext = diagnosticContext;
     }
 
     public async Task<PersonResponse> AddPerson(
@@ -86,42 +91,32 @@ public class PersonsService : IPersonService
     {
         _logger.LogInformation("GetFilteredPersons of PersonsService");
 
-        List<PersonResponse> allPersons = await GetAllPersons();
-        if (string.IsNullOrEmpty(searchBy) ||
-            string.IsNullOrEmpty(searchString)) return allPersons;
-
-        List<PersonResponse> filteredPersons = allPersons.Where(person =>
+        List<Person> persons = searchBy switch
         {
-            // Use reflection to get the property by name
-            PropertyInfo? propertyInfo =
-                typeof(PersonResponse).GetProperty(searchBy,
-                    BindingFlags.IgnoreCase | BindingFlags.Public |
-                    BindingFlags.Instance);
-            if (propertyInfo != null)
-            {
-                // Get the value of the property
-                object? value = propertyInfo.GetValue(person);
-                if (value != null)
-                {
-                    // Special handling for DateOfBirth as it's a DateTime? and needs to be converted to string
-                    if (propertyInfo.PropertyType == typeof(DateTime?))
-                    {
-                        DateTime? date = (DateTime?)value;
-                        return date?.ToString("dd MMMM yyyy")
-                            .Contains(searchString,
-                                StringComparison.OrdinalIgnoreCase) ?? false;
-                    }
+            nameof(PersonResponse.PersonName) => await _personsRepository
+                .GetFilteredPersons(temp =>
+                    temp.PersonName.Contains(searchString)),
+            nameof(PersonResponse.Email) => await _personsRepository
+                .GetFilteredPersons(temp => temp.Email.Contains(searchString)),
+            nameof(PersonResponse.DateOfBirth) => await
+                _personsRepository.GetFilteredPersons(temp =>
+                    temp.DateOfBirth.Value.ToString("dd MMMM yyyy")
+                        .Contains(searchString)),
+            nameof(PersonResponse.Gender) => await _personsRepository
+                .GetFilteredPersons(temp => temp.Gender.Contains(searchString)),
+            nameof(PersonResponse.CountryId) => await _personsRepository
+                .GetFilteredPersons(temp =>
+                    temp.Country.CountryName.Contains(searchString)),
+            nameof(PersonResponse.Address) => await _personsRepository
+                .GetFilteredPersons(temp =>
+                    temp.Address.Contains(searchString)),
 
-                    // Convert the value to string and perform the comparison
-                    return value.ToString()?.Contains(searchString,
-                        StringComparison.OrdinalIgnoreCase) ?? false;
-                }
-            }
+            _ => await _personsRepository.GetAllPersons()
+        };
 
-            return false;
-        }).ToList();
+        _diagnosticContext.Set("Persons", persons);
 
-        return filteredPersons;
+        return persons.Select(p => p.ToPersonResponse()).ToList();
     }
 
     public async Task<List<PersonResponse>> GetSortedPersons(

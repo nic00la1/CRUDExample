@@ -33,13 +33,11 @@ builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonService, PersonsService>();
 
-
 // Add HTTP logging services
 builder.Services.AddHttpLogging(options =>
 {
     // Configure logging options if needed
-    options.LoggingFields =
-        HttpLoggingFields.RequestProperties |
+    options.LoggingFields = HttpLoggingFields.RequestProperties |
         HttpLoggingFields.ResponsePropertiesAndHeaders;
 });
 
@@ -55,10 +53,12 @@ else
         options.UseSqlServer(
             builder.Configuration.GetConnectionString("DefaultConnection"));
     });
+
 WebApplication app = builder.Build();
 
-if (builder.Environment.IsDevelopment())
-    app.UseDeveloperExceptionPage();
+app.UseSerilogRequestLogging();
+
+if (builder.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
 
 app.UseHttpLogging();
 
@@ -68,8 +68,7 @@ app.UseHttpLogging();
 //app.Logger.LogError("error-message");
 //app.Logger.LogCritical("critical-message");
 
-
-if (builder.Environment.IsEnvironment("Test") == false)
+if (!builder.Environment.IsEnvironment("Test"))
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", "Rotativa");
 
 app.UseStaticFiles();
