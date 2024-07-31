@@ -104,10 +104,9 @@ public class PersonsService : IPersonService
                 nameof(PersonResponse.Email) => await _personsRepository
                     .GetFilteredPersons(temp =>
                         temp.Email.Contains(searchString)),
-                nameof(PersonResponse.DateOfBirth) => await
-                    _personsRepository.GetFilteredPersons(temp =>
-                        temp.DateOfBirth.Value.ToString("dd MMMM yyyy")
-                            .Contains(searchString)),
+                nameof(PersonResponse.DateOfBirth) => await _personsRepository
+                    .GetFilteredPersons(temp =>
+                        temp.DateOfBirth.HasValue),
                 nameof(PersonResponse.Gender) => await _personsRepository
                     .GetFilteredPersons(temp =>
                         temp.Gender.Contains(searchString)),
@@ -121,6 +120,12 @@ public class PersonsService : IPersonService
                 _ => await _personsRepository.GetAllPersons()
             };
         } // End of using block
+
+        if (searchBy == nameof(PersonResponse.DateOfBirth) &&
+            !string.IsNullOrEmpty(searchString))
+            persons = persons.Where(p => p.DateOfBirth.HasValue &&
+                p.DateOfBirth.Value.ToString("dd MMMM yyyy")
+                    .Contains(searchString)).ToList();
 
         _diagnosticContext.Set("Persons", persons);
 
