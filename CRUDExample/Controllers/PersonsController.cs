@@ -29,6 +29,11 @@ public class PersonsController : Controller
     [Route("[action]")]
     [Route("/")]
     [TypeFilter(typeof(PersonsListActionFilter))]
+    [TypeFilter(typeof(ResponseHeaderActionFilter),
+        Arguments = new object[]
+        {
+            "X-Custom-Key", "Custom-Value"
+        })]
     public async Task<IActionResult> Index(string searchBy,
                                            string? searchString,
                                            string sortBy =
@@ -59,6 +64,11 @@ public class PersonsController : Controller
     // (while opening the create view)
     [Route("[action]")]
     [HttpGet]
+    [TypeFilter(typeof(ResponseHeaderActionFilter),
+        Arguments = new object[]
+        {
+            "my-key", "my-value"
+        })]
     public async Task<IActionResult> Create()
     {
         List<CountryResponse> countries =
