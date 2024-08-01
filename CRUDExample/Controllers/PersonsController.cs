@@ -72,7 +72,7 @@ public class PersonsController : Controller
     [TypeFilter(typeof(ResponseHeaderActionFilter),
         Arguments = new object[]
         {
-            "my-key", "my-value"
+            "my-key", "my-value", 4
         })]
     public async Task<IActionResult> Create()
     {
@@ -98,7 +98,8 @@ public class PersonsController : Controller
 
     [HttpPost]
     [Route("[action]")]
-    public async Task<IActionResult> Create(PersonAddRequest personAddRequest)
+    [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
+    public async Task<IActionResult> Create(PersonAddRequest personRequest)
     {
         if (!ModelState.IsValid)
         {
@@ -113,12 +114,12 @@ public class PersonsController : Controller
             ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
                 .Select(e => e.ErrorMessage).ToList();
             return
-                View(personAddRequest); // Ensure to pass back the model to preserve user input
+                View(personRequest); // Ensure to pass back the model to preserve user input
         }
 
         // Call the AddPerson method of the PersonService
         PersonResponse personResponse = await
-            _personService.AddPerson(personAddRequest);
+            _personService.AddPerson(personRequest);
 
 
         // Redirect to the Index action of the PersonsController
@@ -151,36 +152,20 @@ public class PersonsController : Controller
 
     [HttpPost]
     [Route("[action]/{personID}")]
+    [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
     public async Task<IActionResult> Edit(
-        PersonUpdateRequest personUpdateRequest
+        PersonUpdateRequest personRequest
     )
     {
         PersonResponse? personResponse = await
-            _personService.GetPersonById(personUpdateRequest.Id);
+            _personService.GetPersonById(personRequest.Id);
 
         if (personResponse == null) return RedirectToAction("Index");
 
-        if (ModelState.IsValid)
-        {
-            PersonResponse updatedPerson = await
-                _personService.UpdatePerson(personUpdateRequest);
+        PersonResponse updatedPerson = await
+            _personService.UpdatePerson(personRequest);
 
-            return RedirectToAction("Index");
-        }
-
-        List<CountryResponse> countries = await
-            _countriesService.GetAllCountries();
-        ViewBag.Countries = countries.Select(country => new SelectListItem
-        {
-            Text = country.CountryName,
-            Value = country.CountryId.ToString()
-        }).ToList();
-
-        ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
-            .Select(e => e.ErrorMessage).ToList();
-        return
-            View(personResponse
-                .ToPersonUpdateRequest()); // Ensure to pass back the model to preserve user input
+        return RedirectToAction("Index");
     }
 
     [HttpGet]
