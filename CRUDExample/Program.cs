@@ -1,3 +1,4 @@
+using CRUDExample.Filters.ActionFilters;
 using Entities;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,18 @@ builder.Host.UseSerilog(
                 services); // Read out current app services and make them available to serilog
     });
 
-builder.Services.AddControllersWithViews();
+// it adds the MVC services to the container
+builder.Services.AddControllersWithViews(options =>
+{
+    //    options.Filters.Add<ResponseHeaderActionFilter>();
+
+    ILogger<ResponseHeaderActionFilter> logger = builder.Services
+        .BuildServiceProvider()
+        .GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
+
+    options.Filters.Add(new ResponseHeaderActionFilter(logger,
+        "My-Key-From-Global", "My-Value-From-Global"));
+});
 
 // Add services into IoC container
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
