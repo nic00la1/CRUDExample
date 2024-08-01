@@ -14,7 +14,7 @@ namespace CRUDExample.Controllers;
     Arguments = new object[]
     {
         "My-Key-From-Controller", "My-Value-From-Controller"
-    })]
+    }, Order = 2)]
 public class PersonsController : Controller
 {
     private readonly IPersonService _personService;
@@ -38,7 +38,7 @@ public class PersonsController : Controller
         Arguments = new object[]
         {
             "MyKey-From-Action", "MyValue-From-Action"
-        })]
+        }, Order = 1)]
     public async Task<IActionResult> Index(string searchBy,
                                            string? searchString,
                                            string sortBy =
