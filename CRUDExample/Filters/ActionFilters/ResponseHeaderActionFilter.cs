@@ -2,21 +2,25 @@
 
 namespace CRUDExample.Filters.ActionFilters;
 
-public class ResponseHeaderActionFilter : IActionFilter
+public class ResponseHeaderActionFilter : IActionFilter, IOrderedFilter
 {
-    private readonly string _key;
-    private readonly string _value;
+    private readonly string Key;
+    private readonly string Value;
     private readonly ILogger<ResponseHeaderActionFilter> _logger;
+
+    public int Order { get; set; }
 
     public ResponseHeaderActionFilter(
         ILogger<ResponseHeaderActionFilter> logger,
         string key,
-        string value
+        string value,
+        int order
     )
     {
-        _key = key;
-        _value = value;
         _logger = logger;
+        Key = key;
+        Value = value;
+        Order = order;
     }
 
     // before
@@ -32,6 +36,6 @@ public class ResponseHeaderActionFilter : IActionFilter
         _logger.LogInformation("{FilterName}.{MethodName} method",
             nameof(ResponseHeaderActionFilter), nameof(OnActionExecuted));
 
-        context.HttpContext.Response.Headers[_key] = _value;
+        context.HttpContext.Response.Headers[Key] = Value;
     }
 }

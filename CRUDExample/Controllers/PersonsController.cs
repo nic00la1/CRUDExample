@@ -13,8 +13,8 @@ namespace CRUDExample.Controllers;
 [TypeFilter(typeof(ResponseHeaderActionFilter),
     Arguments = new object[]
     {
-        "My-Key-From-Controller", "My-Value-From-Controller"
-    }, Order = 2)]
+        "My-Key-From-Controller", "My-Value-From-Controller", 3
+    }, Order = 3)]
 public class PersonsController : Controller
 {
     private readonly IPersonService _personService;
@@ -33,11 +33,11 @@ public class PersonsController : Controller
 
     [Route("[action]")]
     [Route("/")]
-    [TypeFilter(typeof(PersonsListActionFilter))]
+    [TypeFilter(typeof(PersonsListActionFilter), Order = 4)]
     [TypeFilter(typeof(ResponseHeaderActionFilter),
         Arguments = new object[]
         {
-            "MyKey-From-Action", "MyValue-From-Action"
+            "MyKey-From-Action", "MyValue-From-Action", 1
         }, Order = 1)]
     public async Task<IActionResult> Index(string searchBy,
                                            string? searchString,
