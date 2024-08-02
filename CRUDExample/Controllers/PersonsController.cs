@@ -11,6 +11,8 @@ using Rotativa.AspNetCore.Options;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace CRUDExample.Controllers;
 
@@ -47,7 +49,9 @@ public class PersonsController : Controller
                                                nameof(PersonResponse
                                                    .PersonName),
                                            SortOderOptions sortOrder =
-                                               SortOderOptions.ASC
+                                               SortOderOptions.ASC,
+                                           int page = 1,
+                                           int pageSize = 5
     )
     {
         _logger.LogInformation("Index action method of PersonsController");
@@ -56,15 +60,24 @@ public class PersonsController : Controller
             $"searchBy: {searchBy}, searchString: {searchString}, sortBy: {sortBy}, sortOrder: {sortOrder}");
 
         // Search
-
-        List<PersonResponse> persons = await
-            _personService.GetFilteredPersons(searchBy, searchString);
+        List<PersonResponse> persons =
+            await _personService.GetFilteredPersons(searchBy, searchString);
 
         // Sort
         List<PersonResponse> sortedPersons = await
             _personService.GetSortedPersons(persons, sortBy, sortOrder);
 
-        return View(sortedPersons);
+        // Paginate
+        int currentPageSize = pageSize; // Default page size
+        int pageNumber = page;
+
+        IPagedList<PersonResponse> pagedPersons =
+            sortedPersons.ToPagedList(pageNumber, currentPageSize);
+
+        ViewBag.CurrentPageSize = currentPageSize;
+        ViewBag.SearchBy = searchBy;
+        ViewBag.SearchString = searchString;
+        return View(pagedPersons);
     }
 
     // Executes when the user clicks on "Create Person" hyperlink
