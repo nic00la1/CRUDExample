@@ -9,12 +9,15 @@ namespace CRUDExample.Filters.ActionFilters;
 public class PersonCreateAndEditPostActionFilter : IAsyncActionFilter
 {
     private readonly ICountriesService _countriesService;
+    private readonly ILogger<PersonCreateAndEditPostActionFilter> _logger;
 
     public PersonCreateAndEditPostActionFilter(
-        ICountriesService countriesService
+        ICountriesService countriesService,
+        ILogger<PersonCreateAndEditPostActionFilter> logger
     )
     {
         _countriesService = countriesService;
+        _logger = logger;
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context,
@@ -52,5 +55,8 @@ public class PersonCreateAndEditPostActionFilter : IAsyncActionFilter
         } else
             await next(); // invokes the subsequent filters and the action method
         // TO DO: after logic
+
+        _logger.LogInformation(
+            "In after logic of PersonsCreateAndEdit Action filter");
     }
 }
