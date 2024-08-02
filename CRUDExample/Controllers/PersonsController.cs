@@ -1,4 +1,5 @@
 ﻿using CRUDExample.Filters.ActionFilters;
+using CRUDExample.Filters.AuthorizationFilters;
 using CRUDExample.Filters.ResourceFilters;
 using CRUDExample.Filters.ResultFilters;
 using Microsoft.AspNetCore.Mvc;
@@ -133,6 +134,7 @@ public class PersonsController : Controller
 
     [HttpGet]
     [Route("[action]/{personID}")] // Eg: /persons/edit/1
+    [TypeFilter(typeof(TokenResultFilter))]
     public async Task<IActionResult> Edit(Guid personID)
     {
         PersonResponse? personResponse =
@@ -158,6 +160,7 @@ public class PersonsController : Controller
     [HttpPost]
     [Route("[action]/{personID}")]
     [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
+    [TypeFilter(typeof(TokenAuthorizationFilter))]
     public async Task<IActionResult> Edit(
         PersonUpdateRequest personRequest
     )
