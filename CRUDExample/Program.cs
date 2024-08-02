@@ -66,6 +66,8 @@ else
             builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
+builder.Services.AddTransient<PersonsListActionFilter>();
+
 WebApplication app = builder.Build();
 
 app.UseSerilogRequestLogging();
