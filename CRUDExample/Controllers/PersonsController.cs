@@ -41,11 +41,7 @@ public class PersonsController : Controller
     [Route("[action]")]
     [Route("/")]
     [ServiceFilter(typeof(PersonsListActionFilter), Order = 4)]
-    [TypeFilter(typeof(ResponseHeaderActionFilter),
-        Arguments = new object[]
-        {
-            "MyKey-From-Action", "MyValue-From-Action", 1
-        }, Order = 1)]
+    [ResponseHeaderActionFilter("MyKey-From-Action", "MyValue-From-Action", 1)]
     [TypeFilter(typeof(PersonsListResultFilter))]
     [SkipFilter]
     public async Task<IActionResult> Index(string searchBy,
@@ -78,11 +74,7 @@ public class PersonsController : Controller
     // (while opening the create view)
     [Route("[action]")]
     [HttpGet]
-    [TypeFilter(typeof(ResponseHeaderActionFilter),
-        Arguments = new object[]
-        {
-            "my-key", "my-value", 4
-        })]
+    [ResponseHeaderActionFilter("MyKey-From-Action", "MyValue-From-Action", 4)]
     public async Task<IActionResult> Create()
     {
         List<CountryResponse> countries =

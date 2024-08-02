@@ -29,13 +29,7 @@ builder.Host.UseSerilog(
 // it adds the MVC services to the container
 builder.Services.AddControllersWithViews(options =>
 {
-    //    options.Filters.Add<ResponseHeaderActionFilter>(5);
-
-    ILogger<ResponseHeaderActionFilter> logger = builder.Services
-        .BuildServiceProvider()
-        .GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-
-    options.Filters.Add(new ResponseHeaderActionFilter(logger,
+    options.Filters.Add(new ResponseHeaderActionFilter(
         "My-Key-From-Global", "My-Value-From-Global", 2));
 });
 
