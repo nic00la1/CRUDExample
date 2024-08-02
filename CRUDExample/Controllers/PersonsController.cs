@@ -1,4 +1,5 @@
-﻿using CRUDExample.Filters.ActionFilters;
+﻿using CRUDExample.Filters;
+using CRUDExample.Filters.ActionFilters;
 using CRUDExample.Filters.AuthorizationFilters;
 using CRUDExample.Filters.ExceptionFilters;
 using CRUDExample.Filters.ResourceFilters;
@@ -20,6 +21,7 @@ namespace CRUDExample.Controllers;
         "My-Key-From-Controller", "My-Value-From-Controller", 3
     }, Order = 3)]
 [TypeFilter(typeof(HandleExceptionFilter))]
+[TypeFilter(typeof(PersonsAlwaysRunResultFilter))]
 public class PersonsController : Controller
 {
     private readonly IPersonService _personService;
@@ -45,6 +47,7 @@ public class PersonsController : Controller
             "MyKey-From-Action", "MyValue-From-Action", 1
         }, Order = 1)]
     [TypeFilter(typeof(PersonsListResultFilter))]
+    [SkipFilter]
     public async Task<IActionResult> Index(string searchBy,
                                            string? searchString,
                                            string sortBy =
@@ -163,7 +166,6 @@ public class PersonsController : Controller
     [Route("[action]/{personID}")]
     [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
     [TypeFilter(typeof(TokenAuthorizationFilter))]
-    [TypeFilter(typeof(PersonsAlwaysRunResultFilter))]
     public async Task<IActionResult> Edit(
         PersonUpdateRequest personRequest
     )
