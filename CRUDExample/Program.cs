@@ -26,11 +26,21 @@ builder.Host.UseSerilog(
                 services); // Read out current app services and make them available to serilog
     });
 
+builder.Services.AddTransient<ResponseHeaderActionFilter>();
+
 // it adds the MVC services to the container
 builder.Services.AddControllersWithViews(options =>
 {
-    options.Filters.Add(new ResponseHeaderActionFilter(
-        "My-Key-From-Global", "My-Value-From-Global", 2));
+    ILogger<ResponseHeaderActionFilter>? logger = builder.Services
+        .BuildServiceProvider()
+        .GetService<ILogger<ResponseHeaderActionFilter>>();
+
+    options.Filters.Add(new ResponseHeaderActionFilter(logger)
+    {
+        Key = "My-Key-From-Global",
+        Value = "My-Value-From-Global",
+        Order = 2
+    });
 });
 
 // Add services into IoC container

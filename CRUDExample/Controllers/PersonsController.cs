@@ -15,11 +15,8 @@ using ServiceContracts.Enums;
 namespace CRUDExample.Controllers;
 
 [Route("[controller]")]
-[TypeFilter(typeof(ResponseHeaderActionFilter),
-    Arguments = new object[]
-    {
-        "My-Key-From-Controller", "My-Value-From-Controller", 3
-    }, Order = 3)]
+[ResponseHeaderFilterFactory("My-Key-From-Controller",
+    "My-Value-From-Controller", 3)]
 [TypeFilter(typeof(HandleExceptionFilter))]
 [TypeFilter(typeof(PersonsAlwaysRunResultFilter))]
 public class PersonsController : Controller
@@ -41,7 +38,7 @@ public class PersonsController : Controller
     [Route("[action]")]
     [Route("/")]
     [ServiceFilter(typeof(PersonsListActionFilter), Order = 4)]
-    [ResponseHeaderActionFilter("MyKey-From-Action", "MyValue-From-Action", 1)]
+    [ResponseHeaderFilterFactory("MyKey-From-Action", "MyValue-From-Action", 1)]
     [TypeFilter(typeof(PersonsListResultFilter))]
     [SkipFilter]
     public async Task<IActionResult> Index(string searchBy,
@@ -74,7 +71,7 @@ public class PersonsController : Controller
     // (while opening the create view)
     [Route("[action]")]
     [HttpGet]
-    [ResponseHeaderActionFilter("MyKey-From-Action", "MyValue-From-Action", 4)]
+    [ResponseHeaderFilterFactory("MyKey-From-Action", "MyValue-From-Action", 4)]
     public async Task<IActionResult> Create()
     {
         List<CountryResponse> countries =
