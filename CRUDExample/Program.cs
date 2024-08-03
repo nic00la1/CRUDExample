@@ -36,7 +36,10 @@ app.UseSerilogRequestLogging();
 
 if (builder.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
 else
+{
+    app.UseExceptionHandler("/Home/Error");
     app.UseExceptionHandlingMiddleware();
+}
 
 app.UseHttpLogging();
 
