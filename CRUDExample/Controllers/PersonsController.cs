@@ -111,7 +111,7 @@ public class PersonsController : Controller
     [Route("[action]")]
     [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
     [TypeFilter(typeof(FeatureDisabledResourceFilter),
-        Arguments = new object[] { true })]
+        Arguments = new object[] { false })]
     public async Task<IActionResult> Create(PersonAddRequest personRequest)
     {
         if (!ModelState.IsValid)
