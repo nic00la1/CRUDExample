@@ -8,6 +8,7 @@ using Services.Helpers;
 using System.Reflection;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -169,7 +170,8 @@ public class PersonsService : IPersonService
                 .Id);
 
         if (matchingPerson == null)
-            throw new ArgumentException("Given person id doesn't exist!");
+            throw new InvalidPersonIdException(
+                "Given person id doesn't exist!");
 
         // Update all details
         matchingPerson.PersonName = personUpdateRequest.PersonName;
