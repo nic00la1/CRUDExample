@@ -13,15 +13,24 @@ namespace CRUDTests;
 
 public class CountriesServiceTest
 {
-    private readonly ICountriesService _countriesService;
+    private readonly ICountriesAdderService _countriesAdderService;
+    private readonly ICountriesGetterService _countriesGetterService;
+    private readonly ICountriesExcelService _countriesExcelService;
+
     private readonly Mock<ICountriesRepository> _countriesRepositoryMock;
 
     // constructor
     public CountriesServiceTest()
     {
         _countriesRepositoryMock = new Mock<ICountriesRepository>();
-        _countriesService =
-            new CountriesService(_countriesRepositoryMock.Object);
+        _countriesAdderService =
+            new CountriesAdderService(_countriesRepositoryMock.Object);
+
+        _countriesGetterService =
+            new CountriesGetterService(_countriesRepositoryMock.Object);
+
+        _countriesExcelService =
+            new CountriesExcelService(_countriesRepositoryMock.Object);
     }
 
     #region AddCountry
@@ -37,7 +46,7 @@ public class CountriesServiceTest
         // Act
         Func<Task> action = async () =>
         {
-            await _countriesService.AddCountry(request);
+            await _countriesAdderService.AddCountry(request);
         };
 
         // Fluent Assertion
@@ -58,7 +67,7 @@ public class CountriesServiceTest
         // Act
         Func<Task> action = async () =>
         {
-            await _countriesService.AddCountry(request);
+            await _countriesAdderService.AddCountry(request);
         };
 
         // Fluent Assertion
@@ -87,8 +96,8 @@ public class CountriesServiceTest
         // Act
         Func<Task> action = async () =>
         {
-            await _countriesService.AddCountry(request1);
-            await _countriesService.AddCountry(request2);
+            await _countriesAdderService.AddCountry(request1);
+            await _countriesAdderService.AddCountry(request2);
         };
         // Fluent Assertion
         await action.Should().ThrowAsync<ArgumentException>();
@@ -113,7 +122,8 @@ public class CountriesServiceTest
 
 
         // Act
-        CountryResponse response = await _countriesService.AddCountry(request);
+        CountryResponse response =
+            await _countriesAdderService.AddCountry(request);
 
         // Fluent Assertion
         response.CountryId.Should().NotBe(Guid.Empty);
@@ -135,7 +145,7 @@ public class CountriesServiceTest
 
         // Act 
         List<CountryResponse> actual_country_response_list = await
-            _countriesService.GetAllCountries();
+            _countriesGetterService.GetAllCountries();
 
         // Fluent Assertion
         actual_country_response_list.Should().BeEmpty();
@@ -158,7 +168,7 @@ public class CountriesServiceTest
 
         // Act
         List<CountryResponse> actualCountryResponseList =
-            await _countriesService.GetAllCountries();
+            await _countriesGetterService.GetAllCountries();
 
         // Fluent Assertion
         actualCountryResponseList.Should().HaveCount(3);
@@ -182,7 +192,7 @@ public class CountriesServiceTest
 
         // Act
         CountryResponse? country_response_from_get_method = await
-            _countriesService.GetCountryByCountryId(countryId);
+            _countriesGetterService.GetCountryByCountryId(countryId);
 
         // Fluent Assertion
         country_response_from_get_method.Should().BeNull();
@@ -204,7 +214,7 @@ public class CountriesServiceTest
 
         // Act
         CountryResponse? country_response_from_get =
-            await _countriesService.GetCountryByCountryId(countryId);
+            await _countriesGetterService.GetCountryByCountryId(countryId);
 
         // Fluent Assertion
         country_response_from_get.Should().NotBeNull();

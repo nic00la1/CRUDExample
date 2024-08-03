@@ -29,7 +29,7 @@ public class PersonsServiceTest
 
     private readonly PersonTestHelper _personTestHelper;
     private readonly IFixture _fixture;
-    private readonly ICountriesService _countriesService;
+    private readonly ICountriesAdderService _countriesService;
 
     public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {

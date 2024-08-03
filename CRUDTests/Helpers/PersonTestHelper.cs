@@ -13,7 +13,7 @@ public class PersonTestHelper
     private readonly IPersonsUpdaterService _personsUpdaterService;
     private readonly IPersonsDeleterService _personsDeleterService;
 
-    private readonly ICountriesService _countriesService;
+    private readonly ICountriesAdderService _countriesService;
     private readonly ITestOutputHelper _testOutputHelper;
 
     public PersonTestHelper(IPersonsGetterService personsGetterService,
@@ -21,7 +21,7 @@ public class PersonTestHelper
                             IPersonsSorterService personsSorterService,
                             IPersonsUpdaterService personsUpdaterService,
                             IPersonsDeleterService personsDeleterService,
-                            ICountriesService countriesService,
+                            ICountriesAdderService countriesService,
                             ITestOutputHelper testOutputHelper
     )
     {

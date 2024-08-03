@@ -23,7 +23,9 @@ namespace CRUDExample.Controllers;
 [TypeFilter(typeof(PersonsAlwaysRunResultFilter))]
 public class PersonsController : Controller
 {
-    private readonly ICountriesService _countriesService;
+    private readonly ICountriesAdderService _countriesAdderService;
+    private readonly ICountriesGetterService _countriesGetterService;
+    private readonly ICountriesExcelService _countriesExcelService;
     private readonly ILogger<PersonsController> _logger;
     private readonly IPersonsAdderService _personsAdderService;
     private readonly IPersonsUpdaterService _personsUpdaterService;
@@ -32,7 +34,9 @@ public class PersonsController : Controller
     private readonly IPersonsSorterService _personsSorterService;
 
     public PersonsController(
-        ICountriesService countriesService,
+        ICountriesAdderService countriesAdderService,
+        ICountriesGetterService countriesGetterService,
+        ICountriesExcelService countriesExcelService,
         ILogger<PersonsController> logger,
         IPersonsAdderService personsAdderService,
         IPersonsUpdaterService personsUpdaterService,
@@ -41,13 +45,15 @@ public class PersonsController : Controller
         IPersonsSorterService personsSorterService
     )
     {
-        _countriesService = countriesService;
-        _logger = logger;
+        _countriesAdderService = countriesAdderService;
+        _countriesGetterService = countriesGetterService;
+        _countriesExcelService = countriesExcelService;
         _personsAdderService = personsAdderService;
         _personsUpdaterService = personsUpdaterService;
         _personsDeleterService = personsDeleterService;
         _personsGetterService = personsGetterService;
         _personsSorterService = personsSorterService;
+        _logger = logger;
     }
 
     [Route("[action]")]
@@ -102,7 +108,7 @@ public class PersonsController : Controller
     public async Task<IActionResult> Create()
     {
         List<CountryResponse> countries =
-            await _countriesService.GetAllCountries();
+            await _countriesGetterService.GetAllCountries();
 
         ViewBag.Countries = countries.Select(country => new SelectListItem
         {
@@ -131,7 +137,7 @@ public class PersonsController : Controller
         if (!ModelState.IsValid)
         {
             List<CountryResponse> countries = await
-                _countriesService.GetAllCountries();
+                _countriesGetterService.GetAllCountries();
             ViewBag.Countries = countries.Select(country => new SelectListItem
             {
                 Text = country.CountryName,
@@ -167,7 +173,7 @@ public class PersonsController : Controller
             personResponse.ToPersonUpdateRequest();
 
         List<CountryResponse> countries = await
-            _countriesService.GetAllCountries();
+            _countriesGetterService.GetAllCountries();
 
         ViewBag.Countries = countries.Select(country => new SelectListItem
         {

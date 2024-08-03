@@ -15,7 +15,10 @@ namespace CRUDTests;
 public class PersonsControllerTest
 {
     private readonly IFixture _fixture;
-    private readonly Mock<ICountriesService> _countriesServiceMock;
+    private readonly Mock<ICountriesAdderService> _countriesAdderServiceMock;
+    private readonly Mock<ICountriesGetterService> _countriesGetterServiceMock;
+    private readonly Mock<ICountriesExcelService> _countriesExcelServiceMock;
+
     private readonly Mock<ILogger<PersonsController>> _loggerMock;
     private readonly Mock<IPersonsGetterService> _personsGetterServiceMock;
     private readonly Mock<IPersonsSorterService> _personsSorterServiceMock;
@@ -23,7 +26,10 @@ public class PersonsControllerTest
     private readonly Mock<IPersonsUpdaterService> _personsUpdaterServiceMock;
     private readonly Mock<IPersonsDeleterService> _personsDeleterServiceMock;
 
-    private readonly ICountriesService _countriesService;
+    private readonly ICountriesAdderService _countriesAdderService;
+    private readonly ICountriesGetterService _countriesGetterService;
+    private readonly ICountriesExcelService _countriesExcelService;
+
     private readonly ILogger<PersonsController> _logger;
     private readonly IPersonsGetterService _personsGetterService;
     private readonly IPersonsSorterService _personsSorterService;
@@ -35,7 +41,10 @@ public class PersonsControllerTest
     {
         _fixture = new Fixture();
 
-        _countriesServiceMock = new Mock<ICountriesService>();
+        _countriesAdderServiceMock = new Mock<ICountriesAdderService>();
+        _countriesGetterServiceMock = new Mock<ICountriesGetterService>();
+        _countriesExcelServiceMock = new Mock<ICountriesExcelService>();
+
         _loggerMock = new Mock<ILogger<PersonsController>>();
         _personsGetterServiceMock = new Mock<IPersonsGetterService>();
         _personsSorterServiceMock = new Mock<IPersonsSorterService>();
@@ -43,7 +52,10 @@ public class PersonsControllerTest
         _personsUpdaterServiceMock = new Mock<IPersonsUpdaterService>();
         _personsDeleterServiceMock = new Mock<IPersonsDeleterService>();
 
-        _countriesService = _countriesServiceMock.Object;
+        _countriesAdderService = _countriesAdderServiceMock.Object;
+        _countriesGetterService = _countriesGetterServiceMock.Object;
+        _countriesExcelService = _countriesExcelServiceMock.Object;
+
         _logger = _loggerMock.Object;
         _personsGetterService = _personsGetterServiceMock.Object;
         _personsSorterService = _personsSorterServiceMock.Object;
@@ -62,7 +74,9 @@ public class PersonsControllerTest
             _fixture.Create<List<PersonResponse>>();
 
         PersonsController personsController = new(
-            _countriesService,
+            _countriesAdderService,
+            _countriesGetterService,
+            _countriesExcelService,
             _logger,
             _personsAdderService,
             _personsUpdaterService,
@@ -113,7 +127,7 @@ public class PersonsControllerTest
         List<CountryResponse> countries =
             _fixture.Create<List<CountryResponse>>();
 
-        _countriesServiceMock.Setup(temp => temp.GetAllCountries())
+        _countriesGetterServiceMock.Setup(temp => temp.GetAllCountries())
             .ReturnsAsync(countries);
 
         _personsAdderServiceMock.Setup(temp =>
@@ -121,7 +135,9 @@ public class PersonsControllerTest
             .ReturnsAsync(personResponse);
 
         PersonsController personsController = new(
-            _countriesService,
+            _countriesAdderService,
+            _countriesGetterService,
+            _countriesExcelService,
             _logger,
             _personsAdderService,
             _personsUpdaterService,
@@ -158,7 +174,7 @@ public class PersonsControllerTest
         List<CountryResponse> countries =
             _fixture.Create<List<CountryResponse>>();
 
-        _countriesServiceMock.Setup(temp => temp.GetAllCountries())
+        _countriesGetterServiceMock.Setup(temp => temp.GetAllCountries())
             .ReturnsAsync(countries);
 
         _personsAdderServiceMock.Setup(temp =>
@@ -166,7 +182,9 @@ public class PersonsControllerTest
             .ReturnsAsync(personResponse);
 
         PersonsController personsController = new(
-            _countriesService,
+            _countriesAdderService,
+            _countriesGetterService,
+            _countriesExcelService,
             _logger,
             _personsAdderService,
             _personsUpdaterService,
