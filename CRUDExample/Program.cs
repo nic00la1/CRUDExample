@@ -1,4 +1,5 @@
 using CRUDExample.Filters.ActionFilters;
+using CRUDExample.StartupExtensions;
 using Entities;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
@@ -26,51 +27,7 @@ builder.Host.UseSerilog(
                 services); // Read out current app services and make them available to serilog
     });
 
-builder.Services.AddTransient<ResponseHeaderActionFilter>();
-
-// it adds the MVC services to the container
-builder.Services.AddControllersWithViews(options =>
-{
-    ILogger<ResponseHeaderActionFilter>? logger = builder.Services
-        .BuildServiceProvider()
-        .GetService<ILogger<ResponseHeaderActionFilter>>();
-
-    options.Filters.Add(new ResponseHeaderActionFilter(logger)
-    {
-        Key = "My-Key-From-Global",
-        Value = "My-Value-From-Global",
-        Order = 2
-    });
-});
-
-// Add services into IoC container
-builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
-builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
-builder.Services.AddScoped<ICountriesService, CountriesService>();
-builder.Services.AddScoped<IPersonService, PersonsService>();
-
-// Add HTTP logging services
-builder.Services.AddHttpLogging(options =>
-{
-    // Configure logging options if needed
-    options.LoggingFields = HttpLoggingFields.RequestProperties |
-        HttpLoggingFields.ResponsePropertiesAndHeaders;
-});
-
-// Conditionally register the DbContext based on the environment
-if (builder.Environment.IsEnvironment("Test"))
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    {
-        options.UseInMemoryDatabase("TestDatabase");
-    });
-else
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    {
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString("DefaultConnection"));
-    });
-
-builder.Services.AddTransient<PersonsListActionFilter>();
+builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
 
 WebApplication app = builder.Build();
 

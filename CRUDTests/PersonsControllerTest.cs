@@ -1,8 +1,10 @@
 ﻿using AutoFixture;
+using Castle.Core.Logging;
 using CRUDExample.Controllers;
 using Entities;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -14,9 +16,12 @@ public class PersonsControllerTest
 {
     private readonly IPersonService _personsService;
     private readonly ICountriesService _countriesService;
+    private readonly ILogger<PersonsController> _logger;
 
     private readonly Mock<IPersonService> _personsServiceMock;
     private readonly Mock<ICountriesService> _countriesServiceMock;
+    private readonly Mock<ILogger<PersonsController>> _loggerMock;
+
 
     private readonly Fixture _fixture;
 
@@ -26,9 +31,12 @@ public class PersonsControllerTest
 
         _personsServiceMock = new Mock<IPersonService>();
         _countriesServiceMock = new Mock<ICountriesService>();
+        _loggerMock = new Mock<ILogger<PersonsController>>();
+
 
         _personsService = _personsServiceMock.Object;
         _countriesService = _countriesServiceMock.Object;
+        _logger = _loggerMock.Object;
     }
 
     #region Index
@@ -41,7 +49,7 @@ public class PersonsControllerTest
             _fixture.Create<List<PersonResponse>>();
 
         PersonsController personsController = new(
-            _personsService, _countriesService);
+            _personsService, _countriesService, _logger);
 
         _personsServiceMock.Setup(temp =>
                 temp.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>()))
@@ -93,7 +101,7 @@ public class PersonsControllerTest
             .ReturnsAsync(personResponse);
 
         PersonsController personsController = new(
-            _personsService, _countriesService);
+            _personsService, _countriesService, _logger);
 
         // Act 
         personsController.ModelState.AddModelError("PersonName",
@@ -131,7 +139,7 @@ public class PersonsControllerTest
             .ReturnsAsync(personResponse);
 
         PersonsController personsController = new(
-            _personsService, _countriesService);
+            _personsService, _countriesService, _logger);
 
         // Act 
         IActionResult result = await personsController.Create(personAddRequest);
