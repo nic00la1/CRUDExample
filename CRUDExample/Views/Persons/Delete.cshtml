@@ -2,16 +2,28 @@
 @{
     ViewBag.Title = "Delete Person";
 }
+@* breadcrumb starts *@
+<div class="flex">
+    <div class="flex-1">
+        <span class="text-grey">Contacts</span>
+        <i class="fa-solid fa-caret-right text-grey"></i>
+        <span class="text-grey">Persons</span>
+        <i class="fa-solid fa-caret-right text-grey"></i>
+        <span class="text-grey">Delete</span>
+    </div>
+</div>
+@* breadcrumb ends *@
 
-<h2>Delete Person</h2>
-<h3>Are you sure to delete this person?</h3>
 
-<div class="center-box">
+<div class="form-container">
+    <h2 class="text-large">Delete Person</h2>
+    <h3>Are you sure to delete this person?</h3>
+
     <form asp-controller="Persons" asp-action="Delete" method="post">
-    
-    <input type="hidden" asp-for="ID"/>
 
-    @*PersonPersonName*@
+        <input type="hidden" asp-for="ID" />
+
+        @*PersonPersonName*@
         <div class="form-field flex">
             <div class="w-25">
                 <label asp-for="PersonName" class="form-label pt">Person PersonName</label>
@@ -27,7 +39,7 @@
                 <label asp-for="Email" class="form-label pt">Email</label>
             </div>
             <div class="flex-1">
-                <input asp-for="Email" class="form-input" disabled/>
+                <input asp-for="Email" class="form-input" disabled />
                 <span asp-validation-for="Email" class="text-red"></span>
             </div>
         </div>

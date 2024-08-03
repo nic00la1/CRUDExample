@@ -5,16 +5,30 @@
 
 <h2>Create Person</h2>
 
-<div class="center-box">
+@* breadcrumb starts *@
+<div class="flex">
+    <div class="flex-1">
+        <span class="text-grey">Contacts</span>
+        <i class="fa-solid fa-caret-right text-grey"></i>
+        <span class="text-grey">Persons</span> 
+        <i class="fa-solid fa-caret-right text-grey"></i>
+        <span class="text-grey">Create</span>
+    </div>
+</div>
+@* breadcrumb ends *@
+
+<div class="form-container">
+    <a asp-controller="Persons" asp-action="Index" class="link-hover">Back to Persons List</a>
+    <h2 class="text-large">Create Person</h2>
 <form asp-controller="Persons" asp-action="Create" method="post">
-        
+
 @*PersonPersonName*@
 <div class="form-field flex">
     <div class="w-25">
         <label asp-for="PersonName" class="form-label pt">Person Name</label>
     </div>
     <div class="flex-1">
-        <input asp-for="PersonName" class="form-input"/>
+        <input asp-for="PersonName" class="form-input" />
         <span asp-validation-for="PersonName" class="text-red"></span>
     </div>
 </div>
@@ -81,7 +95,7 @@
 @*ReceiveNewsLetters*@
 <div class="form-field flex">
     <div class="w-25">
-    </div> 
+    </div>
     <div class="flex-1">
         <input type="checkbox" asp-for="ReceiveNewsLetters" value="true" />
         <label asp-for="ReceiveNewsLetters" class="form-label">Receive News Letters</label>
@@ -94,7 +108,7 @@
     </div>
     <div class="flex-1">
         <button class="button button-green-back">Create</button>
-                
+
         <div asp-validation-summary="All" class="text-red"></div>
         @if (ViewBag.Errors != null)
         {
@@ -109,7 +123,7 @@
         }
     </div>
 </div>
-        
+
 
 
 </form>
@@ -117,7 +131,7 @@
 
 @section scripts 
 {
-@* <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" asp-fallback-test="window.jQuery" asp-fallback-src="~/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" asp-fallback-test="window.jQuery" asp-fallback-src="~/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.20.0/jquery.validate.min.js" asp-fallback-test="window.jQuery.validator" asp-fallback-src="~/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" asp-fallback-test="window.jQuery.validator.unobtrusive" asp-fallback-src="~/jquery.validate.unobtrusive.min.js"></script> *@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js" asp-fallback-test="window.jQuery.validator.unobtrusive" asp-fallback-src="~/jquery.validate.unobtrusive.min.js"></script> 
 }

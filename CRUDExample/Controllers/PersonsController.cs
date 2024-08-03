@@ -217,6 +217,10 @@ public class PersonsController : Controller
         // Get list of persons
         List<PersonResponse> persons = await _personService.GetAllPersons();
 
+        // Sort persons by name in ascending order
+        persons = persons.OrderBy(p => p.PersonName).ToList();
+
+
         // Return view as pdf
         return new ViewAsPdf("PersonsPDF", persons, ViewData)
         {
