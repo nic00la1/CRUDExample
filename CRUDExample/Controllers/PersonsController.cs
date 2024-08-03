@@ -23,18 +23,31 @@ namespace CRUDExample.Controllers;
 [TypeFilter(typeof(PersonsAlwaysRunResultFilter))]
 public class PersonsController : Controller
 {
-    private readonly IPersonService _personService;
     private readonly ICountriesService _countriesService;
     private readonly ILogger<PersonsController> _logger;
+    private readonly IPersonsAdderService _personsAdderService;
+    private readonly IPersonsUpdaterService _personsUpdaterService;
+    private readonly IPersonsDeleterService _personsDeleterService;
+    private readonly IPersonsGetterService _personsGetterService;
+    private readonly IPersonsSorterService _personsSorterService;
 
-    public PersonsController(IPersonService personService,
+    public PersonsController(IPersonsGetterService personService,
                              ICountriesService countriesService,
-                             ILogger<PersonsController> logger
+                             ILogger<PersonsController> logger,
+                             IPersonsAdderService personsAdderService,
+                             IPersonsUpdaterService personsUpdaterService,
+                             IPersonsDeleterService personsDeleterService,
+                             IPersonsGetterService personsGetterService,
+                             IPersonsSorterService personsSorterService
     )
     {
-        _personService = personService;
         _countriesService = countriesService;
         _logger = logger;
+        _personsAdderService = personsAdderService;
+        _personsUpdaterService = personsUpdaterService;
+        _personsDeleterService = personsDeleterService;
+        _personsGetterService = personsGetterService;
+        _personsSorterService = personsSorterService;
     }
 
     [Route("[action]")]
@@ -61,11 +74,12 @@ public class PersonsController : Controller
 
         // Search
         List<PersonResponse> persons =
-            await _personService.GetFilteredPersons(searchBy, searchString);
+            await _personsGetterService.GetFilteredPersons(searchBy,
+                searchString);
 
         // Sort
         List<PersonResponse> sortedPersons = await
-            _personService.GetSortedPersons(persons, sortBy, sortOrder);
+            _personsSorterService.GetSortedPersons(persons, sortBy, sortOrder);
 
         // Paginate
         int currentPageSize = pageSize; // Default page size
@@ -132,7 +146,7 @@ public class PersonsController : Controller
 
         // Call the AddPerson method of the PersonService
         PersonResponse personResponse = await
-            _personService.AddPerson(personRequest);
+            _personsAdderService.AddPerson(personRequest);
 
 
         // Redirect to the Index action of the PersonsController
@@ -145,7 +159,7 @@ public class PersonsController : Controller
     public async Task<IActionResult> Edit(Guid personID)
     {
         PersonResponse? personResponse =
-            await _personService.GetPersonById(personID);
+            await _personsGetterService.GetPersonById(personID);
 
         if (personResponse == null) return RedirectToAction("Index");
 
@@ -173,12 +187,12 @@ public class PersonsController : Controller
     )
     {
         PersonResponse? personResponse = await
-            _personService.GetPersonById(personRequest.Id);
+            _personsGetterService.GetPersonById(personRequest.Id);
 
         if (personResponse == null) return RedirectToAction("Index");
 
         PersonResponse updatedPerson = await
-            _personService.UpdatePerson(personRequest);
+            _personsUpdaterService.UpdatePerson(personRequest);
 
         return RedirectToAction("Index");
     }
@@ -188,7 +202,7 @@ public class PersonsController : Controller
     public async Task<IActionResult> Delete(Guid? personID)
     {
         PersonResponse? personResponse =
-            await _personService.GetPersonById(personID);
+            await _personsGetterService.GetPersonById(personID);
 
         if (personResponse == null) return RedirectToAction("Index");
 
@@ -202,11 +216,11 @@ public class PersonsController : Controller
     )
     {
         PersonResponse? personResponse = await
-            _personService.GetPersonById(personUpdateRequest.Id);
+            _personsGetterService.GetPersonById(personUpdateRequest.Id);
 
         if (personResponse == null) return RedirectToAction("Index");
 
-        await _personService.DeletePerson(personUpdateRequest
+        await _personsDeleterService.DeletePerson(personUpdateRequest
             .Id); // Added await here
         return RedirectToAction("Index");
     }
@@ -215,7 +229,8 @@ public class PersonsController : Controller
     public async Task<IActionResult> PersonsPDF()
     {
         // Get list of persons
-        List<PersonResponse> persons = await _personService.GetAllPersons();
+        List<PersonResponse> persons =
+            await _personsGetterService.GetAllPersons();
 
         // Sort persons by name in ascending order
         persons = persons.OrderBy(p => p.PersonName).ToList();
@@ -232,7 +247,7 @@ public class PersonsController : Controller
     [Route("[action]")]
     public async Task<IActionResult> PersonsCSV()
     {
-        MemoryStream memoryStream = await _personService.GetPersonCSV();
+        MemoryStream memoryStream = await _personsGetterService.GetPersonCSV();
 
         return File(memoryStream, "application/octet-stream", "persons.csv");
     }
@@ -240,7 +255,8 @@ public class PersonsController : Controller
     [Route("[action]")]
     public async Task<IActionResult> PersonsExcel()
     {
-        MemoryStream memoryStream = await _personService.GetPersonExcel();
+        MemoryStream memoryStream =
+            await _personsGetterService.GetPersonExcel();
 
         return File(memoryStream, "application/octet-stream", "persons.xlsx");
     }

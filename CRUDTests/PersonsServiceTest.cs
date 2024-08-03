@@ -18,9 +18,9 @@ using Serilog.Extensions.Hosting;
 
 namespace CRUDTests;
 
-public class PersonsServiceTest
+public class PersonsGetterServiceTest
 {
-    private readonly IPersonService _personService;
+    private readonly IPersonsGetterService _personService;
     private readonly ICountriesService _countriesService;
 
     private readonly Mock<IPersonsRepository> _personsRepositoryMock;
@@ -30,14 +30,13 @@ public class PersonsServiceTest
     private readonly ApplicationDbContext _dbContext;
     private readonly IFixture _fixture;
 
-    public PersonsServiceTest(ITestOutputHelper testOutputHelper)
+    public PersonsGetterServiceTest(ITestOutputHelper testOutputHelper)
     {
         _fixture = new Fixture();
         _personsRepositoryMock = new Mock<IPersonsRepository>();
         _personsRepository = _personsRepositoryMock.Object;
 
-        Mock<ILogger<PersonsService>> loggerMock =
-            new Mock<ILogger<PersonsService>>();
+        Mock<ILogger<PersonsService>> loggerMock = new();
 
         Mock<IDiagnosticContext> diagnosticContextMock = new();
 

@@ -20,16 +20,16 @@ using ServiceContracts.Enums;
 
 namespace Services;
 
-public class PersonsService : IPersonService
+public class PersonsGetterService : IPersonsGetterService
 {
     private readonly IPersonsRepository _personsRepository;
     private readonly PersonsServiceHelper _personsServiceHelper;
-    private readonly ILogger<PersonsService> _logger;
+    private readonly ILogger<PersonsGetterService> _logger;
     private readonly IDiagnosticContext _diagnosticContext;
 
-    public PersonsService(
+    public PersonsGetterService(
         IPersonsRepository personsRepository,
-        ILogger<PersonsService> logger,
+        ILogger<PersonsGetterService> logger,
         IDiagnosticContext diagnosticContext
     )
     {

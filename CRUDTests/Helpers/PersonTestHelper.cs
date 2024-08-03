@@ -7,11 +7,11 @@ namespace CRUDTests.Helpers;
 
 public class PersonTestHelper
 {
-    private readonly IPersonService _personService;
+    private readonly IPersonsGetterService _personService;
     private readonly ICountriesService _countriesService;
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public PersonTestHelper(IPersonService personService,
+    public PersonTestHelper(IPersonsGetterService personService,
                             ICountriesService countriesService,
                             ITestOutputHelper testOutputHelper
     )
