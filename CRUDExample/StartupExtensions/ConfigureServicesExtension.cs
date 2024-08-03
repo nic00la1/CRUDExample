@@ -38,7 +38,13 @@ public static class ConfigureServicesExtension
         services.AddScoped<ICountriesRepository, CountriesRepository>();
         services.AddScoped<IPersonsRepository, PersonsRepository>();
         services.AddScoped<ICountriesService, CountriesService>();
-        services.AddScoped<IPersonService, PersonsService>();
+
+        services.AddScoped<IPersonsSorterService, PersonsSorterService>();
+        services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+        services.AddScoped<IPersonsAdderService, PersonsAdderService>();
+        services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
+        services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
+
 
 // Add HTTP logging services
         services.AddHttpLogging(options =>

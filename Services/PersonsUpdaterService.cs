@@ -24,12 +24,12 @@ public class PersonsUpdaterService : IPersonsUpdaterService
 {
     private readonly IPersonsRepository _personsRepository;
     private readonly PersonsServiceHelper _personsServiceHelper;
-    private readonly ILogger<PersonsUpdaterService> _logger;
+    private readonly ILogger<PersonsGetterService> _logger;
     private readonly IDiagnosticContext _diagnosticContext;
 
     public PersonsUpdaterService(
         IPersonsRepository personsRepository,
-        ILogger<PersonsUpdaterService> logger,
+        ILogger<PersonsGetterService> logger,
         IDiagnosticContext diagnosticContext
     )
     {

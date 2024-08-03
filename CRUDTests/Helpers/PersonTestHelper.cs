@@ -7,16 +7,29 @@ namespace CRUDTests.Helpers;
 
 public class PersonTestHelper
 {
-    private readonly IPersonsGetterService _personService;
+    private readonly IPersonsGetterService _personsGetterService;
+    private readonly IPersonsAdderService _personsAdderService;
+    private readonly IPersonsSorterService _personsSorterService;
+    private readonly IPersonsUpdaterService _personsUpdaterService;
+    private readonly IPersonsDeleterService _personsDeleterService;
+
     private readonly ICountriesService _countriesService;
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public PersonTestHelper(IPersonsGetterService personService,
+    public PersonTestHelper(IPersonsGetterService personsGetterService,
+                            IPersonsAdderService personsAdderService,
+                            IPersonsSorterService personsSorterService,
+                            IPersonsUpdaterService personsUpdaterService,
+                            IPersonsDeleterService personsDeleterService,
                             ICountriesService countriesService,
                             ITestOutputHelper testOutputHelper
     )
     {
-        _personService = personService;
+        _personsGetterService = personsGetterService;
+        _personsAdderService = personsAdderService;
+        _personsSorterService = personsSorterService;
+        _personsUpdaterService = personsUpdaterService;
+        _personsDeleterService = personsDeleterService;
         _countriesService = countriesService;
         _testOutputHelper = testOutputHelper;
     }
@@ -25,7 +38,7 @@ public class PersonTestHelper
         PersonAddRequest request
     )
     {
-        return await _personService.AddPerson(request);
+        return await _personsAdderService.AddPerson(request);
     }
 
     public PersonAddRequest CreatePersonAddRequest(
@@ -80,7 +93,8 @@ public class PersonTestHelper
     )
     {
         List<Task<PersonResponse>> personResponseTasks = personRequests
-            .Select(request => _personService.AddPerson(request)).ToList();
+            .Select(request => _personsAdderService.AddPerson(request))
+            .ToList();
 
         List<PersonResponse> personResponses =
             (await Task.WhenAll(personResponseTasks)).ToList();
@@ -122,6 +136,6 @@ public class PersonTestHelper
         PersonAddRequest personRequest = CreatePersonAddRequest(name, email,
             address, countryResponse.CountryId, dateOfBirth, gender,
             receiveNewsLetters);
-        return await _personService.AddPerson(personRequest);
+        return await _personsAdderService.AddPerson(personRequest);
     }
 }

@@ -1,12 +1,9 @@
 ﻿using System.Linq.Expressions;
 using CRUDTests.Helpers;
 using Entities;
-using EntityFrameworkCoreMock;
-using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
-using Services;
 using Xunit.Abstractions;
 using AutoFixture;
 using FluentAssertions;
@@ -14,37 +11,56 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using RepositoryContracts;
 using Serilog;
-using Serilog.Extensions.Hosting;
+using Services;
 
 namespace CRUDTests;
 
-public class PersonsGetterServiceTest
+public class PersonsServiceTest
 {
-    private readonly IPersonsGetterService _personService;
-    private readonly ICountriesService _countriesService;
+    private readonly IPersonsGetterService _personsGetterService;
+    private readonly IPersonsAdderService _personsAdderService;
+    private readonly IPersonsUpdaterService _personsUpdaterService;
+    private readonly IPersonsDeleterService _personsDeleterService;
+    private readonly IPersonsSorterService _personsSorterService;
+
 
     private readonly Mock<IPersonsRepository> _personsRepositoryMock;
     private readonly IPersonsRepository _personsRepository;
 
     private readonly PersonTestHelper _personTestHelper;
-    private readonly ApplicationDbContext _dbContext;
     private readonly IFixture _fixture;
+    private readonly ICountriesService _countriesService;
 
-    public PersonsGetterServiceTest(ITestOutputHelper testOutputHelper)
+    public PersonsServiceTest(ITestOutputHelper testOutputHelper)
     {
         _fixture = new Fixture();
         _personsRepositoryMock = new Mock<IPersonsRepository>();
         _personsRepository = _personsRepositoryMock.Object;
 
-        Mock<ILogger<PersonsService>> loggerMock = new();
+        Mock<IDiagnosticContext> diagnosticContextMock =
+            new();
+        Mock<ILogger<PersonsGetterService>> loggerMock =
+            new();
 
-        Mock<IDiagnosticContext> diagnosticContextMock = new();
+        _personsGetterService = new PersonsGetterService(_personsRepository,
+            loggerMock.Object, diagnosticContextMock.Object);
 
-        _personService = new PersonsService(_personsRepository,
-            loggerMock.Object,
-            diagnosticContextMock.Object);
+        _personsAdderService = new PersonsAdderService(_personsRepository,
+            loggerMock.Object, diagnosticContextMock.Object);
 
-        _personTestHelper = new PersonTestHelper(_personService,
+        _personsDeleterService = new PersonsDeleterService(_personsRepository,
+            loggerMock.Object, diagnosticContextMock.Object);
+
+        _personsSorterService = new PersonsSorterService(_personsRepository,
+            loggerMock.Object, diagnosticContextMock.Object);
+
+        _personsUpdaterService = new PersonsUpdaterService(_personsRepository,
+            loggerMock.Object, diagnosticContextMock.Object);
+
+
+        _personTestHelper = new PersonTestHelper(_personsGetterService,
+            _personsAdderService, _personsSorterService, _personsUpdaterService,
+            _personsDeleterService,
             _countriesService, testOutputHelper);
     }
 
@@ -61,7 +77,7 @@ public class PersonsGetterServiceTest
         // Act
         Func<Task> action = async () =>
         {
-            await _personService.AddPerson(personAddRequest);
+            await _personsAdderService.AddPerson(personAddRequest);
         };
 
         // Assert
@@ -87,7 +103,7 @@ public class PersonsGetterServiceTest
         // Assert
         Func<Task> action = async () =>
         {
-            await _personService.AddPerson(personAddRequest);
+            await _personsAdderService.AddPerson(personAddRequest);
         };
 
         await action.Should().ThrowAsync<ArgumentException>();
@@ -114,7 +130,7 @@ public class PersonsGetterServiceTest
 
         // Act
         PersonResponse personResponseFromAdd =
-            await _personService.AddPerson(personAddRequest);
+            await _personsAdderService.AddPerson(personAddRequest);
 
         personResponseExpected.ID = personResponseFromAdd.ID;
 
@@ -138,7 +154,7 @@ public class PersonsGetterServiceTest
 
         // Act
         PersonResponse? personResponseFromGet = await
-            _personService.GetPersonById(personId);
+            _personsGetterService.GetPersonById(personId);
 
         // Fluent Assertion
         personResponseFromGet.Should().BeNull();
@@ -165,7 +181,7 @@ public class PersonsGetterServiceTest
 
         // Act
         PersonResponse? personResponseFromGet = await
-            _personService.GetPersonById(person.Id);
+            _personsGetterService.GetPersonById(person.Id);
 
         // Fluent Assertion
         personResponseFromGet.Should().Be(personResponseExpected);
@@ -187,7 +203,7 @@ public class PersonsGetterServiceTest
 
         //Act
         List<PersonResponse> personFromGet = await
-            _personService.GetAllPersons();
+            _personsGetterService.GetAllPersons();
 
         // Fluent Assertion
         personFromGet.Should().BeEmpty();
@@ -224,7 +240,7 @@ public class PersonsGetterServiceTest
 
         // Act
         List<PersonResponse> personsListFromGet = await
-            _personService.GetAllPersons();
+            _personsGetterService.GetAllPersons();
 
         // Log expected responses
         _personTestHelper.LogPersonResponses("Expected: ",
@@ -271,7 +287,8 @@ public class PersonsGetterServiceTest
 
         // Act
         List<PersonResponse> personsListFromSearch =
-            await _personService.GetFilteredPersons(nameof(Person.PersonName),
+            await _personsGetterService.GetFilteredPersons(
+                nameof(Person.PersonName),
                 "");
 
         // Log actual responses
@@ -321,7 +338,8 @@ public class PersonsGetterServiceTest
 
         // Act 
         List<PersonResponse> personsListFromSearch =
-            await _personService.GetFilteredPersons(nameof(Person.PersonName),
+            await _personsGetterService.GetFilteredPersons(
+                nameof(Person.PersonName),
                 "sa");
 
         // Log actual responses
@@ -363,11 +381,12 @@ public class PersonsGetterServiceTest
         List<PersonResponse> personResponseListExpected =
             persons.Select(temp => temp.ToPersonResponse()).ToList();
 
-        List<PersonResponse> allPersons = await _personService.GetAllPersons();
+        List<PersonResponse> allPersons =
+            await _personsGetterService.GetAllPersons();
 
         // Act 
         List<PersonResponse> personsListFromSort = await
-            _personService.GetSortedPersons(allPersons,
+            _personsSorterService.GetSortedPersons(allPersons,
                 nameof(Person.PersonName),
                 SortOderOptions.DESC);
 
@@ -407,7 +426,7 @@ public class PersonsGetterServiceTest
         Func<Task> action = async () =>
         {
             // Act
-            await _personService.UpdatePerson(personUpdateRequest);
+            await _personsUpdaterService.UpdatePerson(personUpdateRequest);
         };
 
         // Fluent Assertion
@@ -427,7 +446,7 @@ public class PersonsGetterServiceTest
         Func<Task> action = async () =>
         {
             // Act
-            await _personService.UpdatePerson(personUpdateRequest);
+            await _personsUpdaterService.UpdatePerson(personUpdateRequest);
         };
 
         // Fluent Assertion
@@ -455,7 +474,7 @@ public class PersonsGetterServiceTest
         Func<Task> action = async () =>
         {
             // Act
-            await _personService.UpdatePerson(personUpdateRequest);
+            await _personsUpdaterService.UpdatePerson(personUpdateRequest);
         };
 
         // Fluent Assertion
@@ -489,7 +508,7 @@ public class PersonsGetterServiceTest
 
         // Act
         PersonResponse personResponseFromUpdate = await
-            _personService.UpdatePerson(personUpdateRequest);
+            _personsUpdaterService.UpdatePerson(personUpdateRequest);
 
         // Fluent Assertion
         personResponseFromUpdate.Should().Be(personResponseExpected);
@@ -519,7 +538,7 @@ public class PersonsGetterServiceTest
 
         // Act
         bool isDeleted =
-            await _personService.DeletePerson(person.Id);
+            await _personsDeleterService.DeletePerson(person.Id);
 
         // Fluent Assertion
         isDeleted.Should().BeTrue();
@@ -530,7 +549,8 @@ public class PersonsGetterServiceTest
     public async Task DeletePerson_InvalidPersonId()
     {
         // Act
-        bool isDeleted = await _personService.DeletePerson(Guid.NewGuid());
+        bool isDeleted =
+            await _personsDeleterService.DeletePerson(Guid.NewGuid());
 
         // Fluent Assertion
         isDeleted.Should().BeFalse();

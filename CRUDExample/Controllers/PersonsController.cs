@@ -31,14 +31,14 @@ public class PersonsController : Controller
     private readonly IPersonsGetterService _personsGetterService;
     private readonly IPersonsSorterService _personsSorterService;
 
-    public PersonsController(IPersonsGetterService personService,
-                             ICountriesService countriesService,
-                             ILogger<PersonsController> logger,
-                             IPersonsAdderService personsAdderService,
-                             IPersonsUpdaterService personsUpdaterService,
-                             IPersonsDeleterService personsDeleterService,
-                             IPersonsGetterService personsGetterService,
-                             IPersonsSorterService personsSorterService
+    public PersonsController(
+        ICountriesService countriesService,
+        ILogger<PersonsController> logger,
+        IPersonsAdderService personsAdderService,
+        IPersonsUpdaterService personsUpdaterService,
+        IPersonsDeleterService personsDeleterService,
+        IPersonsGetterService personsGetterService,
+        IPersonsSorterService personsSorterService
     )
     {
         _countriesService = countriesService;

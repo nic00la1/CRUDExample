@@ -24,12 +24,12 @@ public class PersonsDeleterService : IPersonsDeleterService
 {
     private readonly IPersonsRepository _personsRepository;
     private readonly PersonsServiceHelper _personsServiceHelper;
-    private readonly ILogger<PersonsDeleterService> _logger;
+    private readonly ILogger<PersonsGetterService> _logger;
     private readonly IDiagnosticContext _diagnosticContext;
 
     public PersonsDeleterService(
         IPersonsRepository personsRepository,
-        ILogger<PersonsDeleterService> logger,
+        ILogger<PersonsGetterService> logger,
         IDiagnosticContext diagnosticContext
     )
     {
