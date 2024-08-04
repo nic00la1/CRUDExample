@@ -46,6 +46,9 @@ public class PersonsGetterServiceChild : PersonsGetterService
         int row = 2;
         List<PersonResponse> persons = await GetAllPersons();
 
+        if (persons.Count == 0)
+            throw new InvalidOperationException("No persons data");
+
         foreach (PersonResponse person in persons)
         {
             workSheet.Cells[row, 1].Value = person.PersonName;

@@ -45,7 +45,7 @@ public static class ConfigureServicesExtension
 
         services
             .AddScoped<IPersonsGetterService,
-                PersonsGetterServiceChild>();
+                PersonsGetterServiceWithFewExcelFields>();
         services.AddScoped<PersonsGetterService,
             PersonsGetterService>();
 
