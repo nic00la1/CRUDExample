@@ -39,7 +39,7 @@ public class PersonsGetterService : IPersonsGetterService
         _diagnosticContext = diagnosticContext;
     }
 
-    public async Task<PersonResponse> AddPerson(
+    public virtual async Task<PersonResponse> AddPerson(
         PersonAddRequest? personAddRequest
     )
     {
@@ -63,7 +63,7 @@ public class PersonsGetterService : IPersonsGetterService
         return person.ToPersonResponse();
     }
 
-    public async Task<List<PersonResponse>> GetAllPersons()
+    public virtual async Task<List<PersonResponse>> GetAllPersons()
     {
         _logger.LogInformation("GetAllPersons of PersonsService");
 
@@ -74,7 +74,7 @@ public class PersonsGetterService : IPersonsGetterService
         return persons.Select(p => p.ToPersonResponse()).ToList();
     }
 
-    public async Task<PersonResponse?> GetPersonById(Guid? personId)
+    public virtual async Task<PersonResponse?> GetPersonById(Guid? personId)
     {
         if (personId == null) return null;
 
@@ -86,7 +86,7 @@ public class PersonsGetterService : IPersonsGetterService
         return person.ToPersonResponse();
     }
 
-    public async Task<List<PersonResponse>> GetFilteredPersons(
+    public virtual async Task<List<PersonResponse>> GetFilteredPersons(
         string searchBy,
         string? searchString
     )
@@ -139,7 +139,7 @@ public class PersonsGetterService : IPersonsGetterService
         return persons.Select(p => p.ToPersonResponse()).ToList();
     }
 
-    public async Task<List<PersonResponse>> GetSortedPersons(
+    public virtual async Task<List<PersonResponse>> GetSortedPersons(
         List<PersonResponse> allPersons,
         string sortBy,
         SortOderOptions sortOrder
@@ -154,7 +154,7 @@ public class PersonsGetterService : IPersonsGetterService
             sortOrder);
     }
 
-    public async Task<PersonResponse> UpdatePerson(
+    public virtual async Task<PersonResponse> UpdatePerson(
         PersonUpdateRequest? personUpdateRequest
     )
     {
@@ -189,7 +189,7 @@ public class PersonsGetterService : IPersonsGetterService
         return matchingPerson.ToPersonResponse();
     }
 
-    public async Task<bool> DeletePerson(Guid? personId)
+    public virtual async Task<bool> DeletePerson(Guid? personId)
     {
         if (personId == null) throw new ArgumentNullException(nameof(personId));
 
@@ -202,7 +202,7 @@ public class PersonsGetterService : IPersonsGetterService
         return true;
     }
 
-    public async Task<MemoryStream> GetPersonCSV()
+    public virtual async Task<MemoryStream> GetPersonCSV()
     {
         MemoryStream memoryStream = new();
         StreamWriter streamWriter = new(memoryStream);
@@ -251,7 +251,7 @@ public class PersonsGetterService : IPersonsGetterService
         return memoryStream;
     }
 
-    public async Task<MemoryStream> GetPersonExcel()
+    public virtual async Task<MemoryStream> GetPersonExcel()
     {
         MemoryStream memoryStream = new();
 
