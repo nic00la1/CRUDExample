@@ -42,7 +42,13 @@ public static class ConfigureServicesExtension
         services.AddScoped<ICountriesExcelService, CountriesExcelService>();
         services.AddScoped<ICountriesAdderService, CountriesAdderService>();
         services.AddScoped<IPersonsSorterService, PersonsSorterService>();
-        services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+
+        services
+            .AddScoped<IPersonsGetterService,
+                PersonsGetterServiceWithFewExcelFields>();
+        services.AddScoped<PersonsGetterService,
+            PersonsGetterService>();
+
         services.AddScoped<IPersonsAdderService, PersonsAdderService>();
         services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
         services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
